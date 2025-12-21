@@ -1,0 +1,101 @@
+// BLL/Services/UserService.cs
+using Interfaces.Services;
+using Interfaces.DTO;
+using Interfaces.Repository;
+using System.Threading.Tasks;
+using Core.Entities;
+using System.Security.Cryptography;
+using System.Text;
+using System;
+using System.Diagnostics; // Добавим для Debug.WriteLine
+
+namespace BLL.Services
+{
+    public class UserService : IUserService
+    {
+        private readonly Interfaces.Repository.IUserRepository _userReadRepository;
+        private readonly DAL.Repositories.UserWriteRepository _userWriteRepository;
+
+        public UserService(Interfaces.Repository.IUserRepository userReadRepository, DAL.Repositories.UserWriteRepository userWriteRepository)
+        {
+            _userReadRepository = userReadRepository;
+            _userWriteRepository = userWriteRepository;
+        }
+
+        public async Task<UserDto?> AuthenticateAsync(string login, string password)
+        {
+            var userDto = await _userReadRepository.GetByLoginAsync(login);
+            if (userDto == null) return null;
+
+            // For demo: use same hashing approach as AuthService
+            var hash = ComputeHash(password);
+            var provided = Encoding.UTF8.GetBytes(hash);
+            if (userDto.PasswordHash == null) return null;
+            if (provided.Length != userDto.PasswordHash.Length) return null;
+            for (int i = 0; i < provided.Length; i++)
+            {
+                if (provided[i] != userDto.PasswordHash[i]) return null;
+            }
+
+            return userDto;
+        }
+
+        public async Task<int> RegisterAsync(UserCreateDto dto)
+        {
+            Debug.WriteLine($"UserService.RegisterAsync вызван. Login: {dto.Login}, IsClient: {dto.IsClient}");
+
+            // Check if login already exists
+            var existing = await _userReadRepository.GetByLoginAsync(dto.Login);
+            if (existing != null)
+            {
+                throw new System.InvalidOperationException("Login already exists");
+            }
+
+            var passwordHashString = ComputeHash(dto.Password);
+            var user = new User
+            {
+                Login = dto.Login,
+                PasswordHash = Encoding.UTF8.GetBytes(passwordHashString),
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                MiddleName = dto.MiddleName,
+                PhoneNumber = dto.PhoneNumber,
+                IsClient = dto.IsClient
+            };
+
+            var id = await _userWriteRepository.AddUserAsync(user);
+            Debug.WriteLine($"UserService: Id пользователя после сохранения: {id}");
+
+            if (dto.IsClient)
+            {
+                Debug.WriteLine($"UserService: Создание ClientProfile для Id={id}");
+                var profile = new ClientProfile
+                {
+                    Id = id, // <--- Убедитесь, что это правильный Id
+                    Passport = dto.Passport,
+                    DriverLicense = dto.DriverLicense,
+                    DrivingExperience = dto.DrivingExperience
+                };
+
+                await _userWriteRepository.AddClientProfileAsync(profile);
+                Debug.WriteLine($"UserService: ClientProfile для Id={id} отправлен на сохранение.");
+            }
+
+            return id;
+        }
+
+        public async Task<UserDto?> GetByIdAsync(int id)
+        {
+            // Not implemented
+            return null;
+        }
+
+        private static string ComputeHash(string input)
+        {
+            using var sha = SHA256.Create();
+            var bytes = Encoding.UTF8.GetBytes(input);
+            var hash = sha.ComputeHash(bytes);
+            return Convert.ToBase64String(hash);
+        }
+    }
+}

@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/AppCore/">
+    <Project Path="Core/Core.csproj" Id="27306589-c7f2-4f67-abf6-4bd39ff15fd2" />
+    <Project Path="Interfaces/Interfaces.csproj" Id="6c4db6f3-b993-431a-bfd7-b8bc7da8fd0f" />
+  </Folder>
+  <Folder Name="/AppService/">
+    <Project Path="BLL/BLL.csproj" Id="5a9ff8eb-b66b-4866-9e97-94a8cbcb441b" />
+    <Project Path="DAL/DAL.csproj" Id="77d5636e-4a1b-47af-a1d1-1a749e731dc8" />
+  </Folder>
+  <Project Path="PL/PL.csproj" Id="d9a854df-1fd9-443c-a9ec-8282fc04b5d6" />
+</Solution>

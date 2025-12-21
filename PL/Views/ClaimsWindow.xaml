@@ -1,0 +1,60 @@
+﻿<!-- PL/Views/ClaimsWindow.xaml -->
+<Window x:Class="PL.ClaimsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Мои страховые случаи" Height="600" Width="1200"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Для кнопок и фильтров -->
+            <RowDefinition Height="Auto"/>
+            <!-- Для ошибки -->
+            <RowDefinition Height="*"/>
+            <!-- Для DataGrid -->
+        </Grid.RowDefinitions>
+
+        <!-- Панель кнопок и фильтров -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,10">
+            <Button Content="Назад" Command="{Binding GoBackCommand}" Width="80" Margin="0,0,10,0"/>
+            <Button Content="Обновить" Command="{Binding LoadClaimsCommand}" Width="80" Margin="0,0,10,0"/>
+            <Button Content="Подать заявку" Command="{Binding RegisterNewClaimCommand}" Width="100" Margin="0,0,10,0"/>
+
+            <TextBlock Text="Статус:" VerticalAlignment="Center" Margin="20,0,5,0"/>
+            <ComboBox ItemsSource="{Binding ClaimStatusFilters}"
+                     SelectedItem="{Binding SelectedClaimStatusFilter}"
+                     Width="120" Margin="0,0,10,0"/>
+
+            <TextBlock Text="Полис:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+            <ComboBox ItemsSource="{Binding AllPoliciesForFilter}"
+         SelectedValuePath="Id"  
+                SelectedValue="{Binding SelectedPolicyFilter}"
+               
+                DisplayMemberPath="PolicyNumber"
+         Width="150" Margin="0,0,10,0"/>
+        </StackPanel>
+
+        <!-- Сообщение об ошибке -->
+        <TextBlock Grid.Row="1" Text="{Binding ErrorMessage}" Foreground="Red" Margin="0,0,0,10" TextWrapping="Wrap" Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
+
+        <!-- Таблица страховых случаев -->
+        <DataGrid Grid.Row="2"
+                 ItemsSource="{Binding Claims}" 
+            AutoGenerateColumns="False"
+                 CanUserAddRows="False"
+                 CanUserDeleteRows="False"
+                 IsReadOnly="True"
+                 Margin="0,10,0,0">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
+                <DataGridTextColumn Header="Полис" Binding="{Binding PolicyNumber}" Width="120"/>
+                <DataGridTextColumn Header="Дата" Binding="{Binding ClaimDate, StringFormat=dd.MM.yyyy HH:mm}" Width="120"/>
+                <DataGridTextColumn Header="Статус" Binding="{Binding StatusName}" Width="100"/>
+                <DataGridTextColumn Header="Описание" Binding="{Binding Description}" Width="200"/>
+                <DataGridTextColumn Header="Место" Binding="{Binding Location}" Width="150"/>
+                <DataGridTextColumn Header="Оценка ущерба" Binding="{Binding EstimatedDamage, StringFormat={}{0:N2} ₽}" Width="120"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>

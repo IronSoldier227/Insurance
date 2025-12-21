@@ -1,0 +1,50 @@
+<Window x:Class="PL.RegisterWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Регистрация" Height="450" Width="400">
+    <!-- Увеличим высоту -->
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <!-- Для ошибки -->
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Vertical" Grid.Row="0">
+            <!-- Ваши TextBox и TextBlock -->
+            <TextBlock Text="Логин"/>
+            <TextBox Text="{Binding Login, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBlock Text="Пароль"/>
+            <PasswordBox x:Name="PasswordBox"/>
+            <TextBlock Text="Имя"/>
+            <TextBox Text="{Binding FirstName}"/>
+            <TextBlock Text="Фамилия"/>
+            <TextBox Text="{Binding LastName}"/>
+            <TextBlock Text="Отчество"/>
+            <TextBox Text="{Binding MiddleName}"/>
+            <TextBlock Text="Номер телефона"/>
+            <TextBox Text="{Binding PhoneNumber}"/>
+            <TextBlock Text="Пасспорт"/>
+            <TextBox Text="{Binding Passport}"/>
+            <TextBlock Text="Номер В/У"/>
+            <TextBox Text="{Binding DriverLicense}"/>
+            <TextBlock Text="Стаж вождения"/>
+            <TextBox Text="{Binding DrivingExperience}"/>
+        </StackPanel>
+
+        <!-- Отображение ошибки -->
+        <TextBlock Grid.Row="1"
+                   Text="{Binding ErrorMessage}"
+                   Foreground="Red"
+                   TextWrapping="Wrap"
+                   Margin="0,5,0,5"/>
+
+        <StackPanel Grid.Row="2" Orientation="Vertical">
+            <Button Content="Зарегистрироваться" HorizontalAlignment="Right" Width="128"
+                    Command="{Binding RegisterCommand}"
+                    CommandParameter="{x:Reference PasswordBox}"
+                    Margin="0,10,0,0"/>
+        </StackPanel>
+    </Grid>
+</Window>
