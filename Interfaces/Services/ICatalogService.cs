@@ -10,5 +10,7 @@ namespace Interfaces.Services
         Task<IEnumerable<Brand>> GetAllBrandsAsync();
         Task<IEnumerable<Model>> GetModelsByBrandIdAsync(int brandId);
         Task<IEnumerable<string>> GetCategoriesAsync();
+        Task<IEnumerable<string>> GetPolicyTypesAsync();
+        Task<int> GetPolicyTypeIdByNameAsync(string typeName);
     }
 }

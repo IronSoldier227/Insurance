@@ -242,19 +242,13 @@ namespace PL.ViewModels
         // ...
         private async Task InsureVehicleAsync()
         {
+
             if (SelectedVehicle == null)
             {
                 ErrorMessage = "Выберите автомобиль для страхования";
                 return;
             }
 
-            if (SelectedVehicle.IsInsured)
-            {
-                ErrorMessage = "Этот автомобиль уже застрахован";
-                MessageBox.Show("Этот автомобиль уже имеет активный страховой полис",
-                    "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
-            }
 
             try
             {
@@ -295,8 +289,6 @@ namespace PL.ViewModels
                 if (result == true)
                 {
                     await LoadVehiclesAsync();
-                    MessageBox.Show("Страховой полис успешно оформлен!",
-                        "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
             catch (Exception ex)

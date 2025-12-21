@@ -4,6 +4,7 @@ using Interfaces.Repository;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace DAL.Repositories
@@ -49,6 +50,15 @@ namespace DAL.Repositories
         {
             _context.InsurancePolicies.Update(policy);
             _context.SaveChanges();
+        }
+        public async Task<IEnumerable<InsurancePolicy>> GetAllWithIncludesAsync(params Expression<Func<InsurancePolicy, object>>[] includes)
+        {
+            IQueryable<InsurancePolicy> query = _context.InsurancePolicies;
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+            return await query.ToListAsync();
         }
     }
 }

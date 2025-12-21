@@ -1,13 +1,15 @@
 ﻿using Core.Entities;
+using DAL.Context;
 using Interfaces.DTO;
 using Interfaces.Repository;
 using Interfaces.Services;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Threading.Tasks;
-using DAL.Context;
 
 namespace BLL.Services
 {
@@ -19,7 +21,6 @@ namespace BLL.Services
         public PolicyService(IPolicyRepository policyRepository, InsuranceDbContext context)
         {
             _policyRepository = policyRepository;
-            _context = context;
         }
 
         public async Task<int> CreatePolicyAsync(Insurance policyDto)
@@ -150,6 +151,48 @@ namespace BLL.Services
             p.CancelledBy = cancelledByManagerId;
             _policyRepository.Update(p);
         }
+
+        public async Task<IEnumerable<Insurance>> GetActivePoliciesByVehicleIdAsync(int vehicleId)
+        {
+            const int ACTIVE_STATUS_ID = 1;
+
+            // Вызываем общий репозиторий с указанием связей, которые нужно загрузить
+            // Это позволяет получить TypeName и StatusName через навигационные свойства
+            var policies = await _policyRepository.GetAllWithIncludesAsync(
+                p => p.Type,      // Загружаем связь InsurancePolicy -> TypeOfPolicy
+                p => p.Status,    // Загружаем связь InsurancePolicy -> StatusOfPolicy
+                p => p.Vehicle   // Опционально: загружаем Vehicle, если нужно что-то из него
+            );
+
+            // Фильтруем по VehicleId и StatusId
+            var activePoliciesForVehicle = policies.Where(p => p.VehicleId == vehicleId && p.StatusId == ACTIVE_STATUS_ID);
+
+            // Преобразуем в DTO
+            var dtos = new List<Insurance>();
+            foreach (var policy in activePoliciesForVehicle)
+            {
+                // Теперь можно получить TypeName и StatusName через навигационные свойства
+                dtos.Add(new Insurance
+                { 
+                    Id = policy.Id,
+                    VehicleId = policy.VehicleId,
+                    TypeId = policy.TypeId,
+                    TypeName = policy.Type.Name,
+                    StatusId = policy.StatusId,
+                    StatusName = policy.Status.Name,
+                    PolicyNumber = policy.PolicyNumber,
+                    StartDate = policy.StartDate,
+                    EndDate = policy.EndDate,
+                    BasePrice = policy.BasePrice,
+                    PowerCoefficient = policy.PowerCoefficient,
+                    ExperienceCoefficient = policy.ExperienceCoefficient,
+                    BonusMalusCoefficient = policy.BonusMalusCoefficient
+                });
+            }
+
+            return dtos;
+        }
+
         public async Task<IEnumerable<Insurance>> GetPoliciesByVehicleId(int vehicleId)
         {
             var policies = await _policyRepository.GetPoliciesByVehicleIdAsync(vehicleId);

@@ -1,7 +1,12 @@
+// DAL/Repositories/Repository.cs
+using Core.Entities;
+using DAL.Context;
 using Interfaces.Repository;
 using Microsoft.EntityFrameworkCore;
-using DAL.Context;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace DAL.Repositories
@@ -47,21 +52,26 @@ namespace DAL.Repositories
             return await _context.SaveChangesAsync();
         }
 
-        // --- Реализация нового метода ---
-        public async Task<IEnumerable<T>> GetByVehicleIdAsync(int vehicleId)
+        // --- Реализация новых методов ---
+        public async Task<IEnumerable<T>> GetAllWithIncludesAsync(params Expression<Func<T, object>>[] includes)
         {
-            // Проверяем, есть ли у сущности свойство VehicleId
-            if (typeof(T).GetProperty("VehicleId") != null)
+            IQueryable<T> query = _dbSet;
+            foreach (var include in includes)
             {
-                // Используем LINQ для фильтрации
-                var query = _dbSet.Where(entity => EF.Property<int>(entity, "VehicleId") == vehicleId);
-                return await query.ToListAsync();
+                query = query.Include(include);
             }
-            else
-            {
-                // Если свойство VehicleId не найдено, возвращаем пустую коллекцию
-                return new List<T>();
-            }
+            return await query.ToListAsync();
         }
+
+        public async Task<T?> GetByIdWithIncludesAsync(int id, params Expression<Func<T, object>>[] includes)
+        {
+            IQueryable<T> query = _dbSet;
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+            return await query.FirstOrDefaultAsync(e => EF.Property<int>(e, "Id") == id); // Предполагаем, что Id - это ключ
+        }
+        // ---
     }
 }
