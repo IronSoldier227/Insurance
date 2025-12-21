@@ -1,28 +1,27 @@
 // PL/RelayCommand.cs
 using System;
 using System.Windows.Input;
+using System.Diagnostics; // Для Debug.WriteLine
 
 namespace PL
 {
     public class RelayCommand : ICommand
     {
-        private readonly Func<object?, Task>? _executeAsync; // Добавим асинхронную версию
+        private readonly Func<object?, Task>? _executeAsync;
         private readonly Action<object?>? _execute;
-        private readonly Predicate<object?>? _canExecute;
-        private readonly Func<bool>? _canExecuteFunc; // Новый делегат
+        private readonly Predicate<object?>? _canExecutePredicate;
+        private readonly Func<bool>? _canExecuteFunc;
 
-        // Конструктор для асинхронной команды
         public RelayCommand(Func<object?, Task> executeAsync, Predicate<object?>? canExecute = null)
         {
             _executeAsync = executeAsync ?? throw new ArgumentNullException(nameof(executeAsync));
-            _canExecute = canExecute;
+            _canExecutePredicate = canExecute;
         }
 
-        // Конструктор для синхронной команды (для обратной совместимости)
         public RelayCommand(Action<object?> execute, Predicate<object?>? canExecute = null)
         {
             _execute = execute ?? throw new ArgumentNullException(nameof(execute));
-            _canExecute = canExecute;
+            _canExecutePredicate = canExecute;
         }
 
         public RelayCommand(Action<object?> execute, Func<bool>? canExecute = null)
@@ -31,29 +30,50 @@ namespace PL
             _canExecuteFunc = canExecute;
         }
 
-        // НОВЫЙ Конструктор для асинхронной команды с Func<bool>
         public RelayCommand(Func<object?, Task> executeAsync, Func<bool>? canExecute = null)
         {
             _executeAsync = executeAsync ?? throw new ArgumentNullException(nameof(executeAsync));
             _canExecuteFunc = canExecute;
         }
 
-        public bool CanExecute(object? parameter) => _canExecute?.Invoke(parameter) ?? true;
+        public bool CanExecute(object? parameter)
+        {
+            if (_canExecutePredicate != null)
+            {
+                return _canExecutePredicate(parameter);
+            }
+            if (_canExecuteFunc != null)
+            {
+                return _canExecuteFunc();
+            }
+            return true;
+        }
 
         public async void Execute(object? parameter)
         {
-            if (_executeAsync != null)
+            try
             {
-                await _executeAsync(parameter);
+                if (_executeAsync != null)
+                {
+                    await _executeAsync(parameter);
+                }
+                else if (_execute != null)
+                {
+                    _execute(parameter);
+                }
             }
-            else if (_execute != null)
+            catch (Exception ex)
             {
-                _execute(parameter);
+                // Логируем исключение
+                Debug.WriteLine($"RelayCommand.ExecuteAsync исключение: {ex.Message}");
+                Debug.WriteLine($"Стек вызова: {ex.StackTrace}");
+                // В реальном приложении можно использовать ILogger
+                // или показать пользователю сообщение об ошибке через ViewModel
             }
-            // Обновляем CanExecute после выполнения, если есть canExecute
-            if (_canExecute != null)
+
+            if (_canExecutePredicate != null || _canExecuteFunc != null)
             {
-                CommandManager.InvalidateRequerySuggested(); // Уведомляем WPF перепроверить CanExecute
+                CommandManager.InvalidateRequerySuggested();
             }
         }
 

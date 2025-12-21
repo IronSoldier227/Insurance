@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Interfaces.DTO
 {
-    public class Manager
+    public class ManagerDTO
     {
         public int Id { get; set; }
         public string FirstName { get; set; }

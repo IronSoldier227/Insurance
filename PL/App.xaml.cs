@@ -68,10 +68,12 @@ namespace PL
             services.AddTransient<PoliciesWindow>();
             services.AddTransient<ClaimsWindow>();
             services.AddTransient<RegisterClaimWindow>();
-            services.AddTransient<PaymentsWindow>();  
+            services.AddTransient<PaymentsWindow>();
+            services.AddTransient<ManagerWindow>();
 
             // ViewModels
             services.AddTransient<MainViewModel>();
+            services.AddTransient<ManagerViewModel>();
             services.AddTransient<VehiclesViewModel>(); 
             services.AddTransient<LoginViewModel>();
             services.AddTransient<RegisterViewModel>();

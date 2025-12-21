@@ -46,6 +46,8 @@ namespace PL.ViewModels
 
         private bool CanLogin() => !string.IsNullOrEmpty(Login); // Пароль проверим при выполнении
 
+        // PL/ViewModels/LoginViewModel.cs
+        // ...
         public async Task LoginAsync(PasswordBox? passwordBox)
         {
             ErrorMessage = string.Empty;
@@ -62,9 +64,19 @@ namespace PL.ViewModels
                 if (user != null)
                 {
                     _currentUserService.SetCurrentUser(user);
-                    // Переходим на главное окно. LoginWindow закроется.
-                    _navigationService.NavigateTo<MainWindow>();
-                    passwordBox.Clear(); // Опционально
+
+                    // --- Проверяем тип пользователя и перенаправляем ---
+                    if (user.IsClient)
+                    {
+                        _navigationService.NavigateTo<MainWindow>();
+                    }
+                    else // Это менеджер
+                    {
+                        _navigationService.NavigateTo<ManagerWindow>(); // <-- Новое окно
+                    }
+                    // --- 
+
+                    passwordBox.Clear();
                 }
                 else
                 {
@@ -76,6 +88,7 @@ namespace PL.ViewModels
                 ErrorMessage = $"Ошибка аутентификации: {ex.Message}";
             }
         }
+        // ...
 
         // PL/ViewModels/LoginViewModel.cs
         // ...

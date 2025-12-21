@@ -73,5 +73,24 @@ namespace DAL.Repositories
                 throw;
             }
         }
+
+        // DAL/Repositories/UserWriteRepository.cs
+        // ...
+        public async Task AddManagerAsync(Manager manager)
+        {
+            try
+            {
+                // Убедитесь, что Id = Id пользователя (он уже сгенерирован)
+                // Manager.Id = Id пользователя, и он Identity = Never
+                await _context.Managers.AddAsync(manager);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка сохранения Manager: {ex.Message}");
+                throw;
+            }
+        }
+        // ...
     }
 }

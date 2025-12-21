@@ -1,12 +1,12 @@
 // PL/ViewModels/RegisterViewModel.cs
-using Interfaces.DTO;
-using Interfaces.Services;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows.Input;
+using Interfaces.Services;
+using Interfaces.DTO;
 using System.Threading.Tasks;
 using System.Windows.Controls; // Для PasswordBox
-using System.Windows.Input;
-using System.Diagnostics;
+using System;
 
 namespace PL.ViewModels
 {
@@ -14,34 +14,43 @@ namespace PL.ViewModels
     {
         private readonly IUserService _userService;
         private readonly ICurrentUserService _currentUserService;
-        private readonly INavigationService _navigationService; // Добавляем
+        private readonly INavigationService _navigationService;
         private string _errorMessage = string.Empty;
 
-        // PL/ViewModels/RegisterViewModel.cs
-        // ...
         public RegisterViewModel(
             IUserService userService,
             ICurrentUserService currentUserService,
             INavigationService navigationService)
         {
-            Debug.WriteLine("RegisterViewModel.ctor вызван.");
             _userService = userService;
             _currentUserService = currentUserService;
             _navigationService = navigationService;
-            // Изменяем команду: RegisterCommand теперь принимает PasswordBox
             RegisterCommand = new RelayCommand(async param => await RegisterAsync(param as PasswordBox), _ => CanRegister());
-            Debug.WriteLine("RegisterViewModel.ctor завершён.");
         }
-        // ...
 
-        public bool IsClient { get; set; } = true;
+        // --- Новые свойства для типа пользователя ---
+        private bool _isClientType = true; // По умолчанию "Клиент"
+        public bool IsClientType
+        {
+            get => _isClientType;
+            set { _isClientType = value; OnPropertyChanged(); }
+        }
+
+        public bool IsManagerType
+        {
+            get => !_isClientType; // Противоположно IsClientType
+            set { IsClientType = !value; OnPropertyChanged(); }
+        }
+        // --- 
+
+        public string Login { get; set; } = string.Empty;
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string MiddleName { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;
-        public string Passport { get; set; } = string.Empty;
-        public string DriverLicense { get; set; } = string.Empty;
-        public int DrivingExperience { get; set; } = 0;
+        public string Passport { get; set; } = string.Empty; // Оставляем, но используем условно
+        public string DriverLicense { get; set; } = string.Empty; // Оставляем, но используем условно
+        public int DrivingExperience { get; set; } = 0; // Оставляем, но используем условно
 
         public ICommand RegisterCommand { get; }
 
@@ -51,87 +60,92 @@ namespace PL.ViewModels
             set { _errorMessage = value; OnPropertyChanged(); }
         }
 
-        private string _login = string.Empty;
-        public string Login
-        {
-            get => _login;
-            set
-            {
-                _login = value;
-                OnPropertyChanged(); // Уведомляем об изменении
-                                     // CommandManager.RequerySuggested вызовет CanExecute снова
-            }
-        }
-
-        // В RegisterViewModel.cs
-        private bool CanRegister()
-        {
-            var result = !string.IsNullOrEmpty(Login);
-            Debug.WriteLine($"RegisterViewModel.CanRegister вызван. Login.Length: {Login?.Length ?? 0}, Result: {result}");
-            return result;
-        }
-
-        protected void OnPropertyChanged([CallerMemberName] string? name = null)
-        {
-            Console.WriteLine($"OnPropertyChanged called for: {name}");
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
+        private bool CanRegister() => !string.IsNullOrEmpty(Login);
 
         // PL/ViewModels/RegisterViewModel.cs
         // ...
         public async Task RegisterAsync(PasswordBox? passwordBox)
         {
-            Debug.WriteLine("RegisterViewModel.RegisterAsync вызван.");
+            System.Diagnostics.Debug.WriteLine("RegisterViewModel.RegisterAsync вызван.");
             ErrorMessage = string.Empty;
 
             if (passwordBox == null || string.IsNullOrEmpty(passwordBox.Password))
             {
                 ErrorMessage = "Пароль не может быть пустым.";
+                System.Diagnostics.Debug.WriteLine(ErrorMessage);
                 return;
             }
 
             try
             {
+                System.Diagnostics.Debug.WriteLine("Начинаем процесс регистрации...");
+
                 var dto = new UserCreateDto
                 {
                     Login = Login,
                     Password = passwordBox.Password,
-                    IsClient = true,
+                    IsClient = IsClientType,
                     FirstName = FirstName,
                     LastName = LastName,
                     MiddleName = MiddleName,
                     PhoneNumber = PhoneNumber,
-                    Passport = Passport,
-                    DriverLicense = DriverLicense,
-                    DrivingExperience = DrivingExperience
+                    Passport = IsClientType ? Passport : string.Empty,
+                    DriverLicense = IsClientType ? DriverLicense : string.Empty,
+                    DrivingExperience = IsClientType ? DrivingExperience : 0
                 };
 
-                var id = await _userService.RegisterAsync(dto);
+                System.Diagnostics.Debug.WriteLine($"Отправляем DTO: Login={dto.Login}, IsClient={dto.IsClient}");
 
+                var id = await _userService.RegisterAsync(dto);
+                System.Diagnostics.Debug.WriteLine($"Регистрация успешна, получен ID: {id}");
+
+                // Аутентифицируем нового пользователя сразу после регистрации
                 var user = await _userService.AuthenticateAsync(Login, passwordBox.Password);
+                System.Diagnostics.Debug.WriteLine($"Результат аутентификации: {(user != null ? "Успешно" : "Неудача")}");
+
                 if (user != null)
                 {
                     _currentUserService.SetCurrentUser(user);
-                    Debug.WriteLine("Регистрация успешна, вызов NavigateTo<MainWindow>.");
-                    // Переходим на главное окно. RegisterWindow закроется.
-                    _navigationService.NavigateTo<MainWindow>();
+                    System.Diagnostics.Debug.WriteLine("Пользователь установлен как текущий.");
+
+                    // --- Проверяем тип пользователя и перенаправляем ---
+                    if (user.IsClient)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Перенаправление на MainWindow.");
+                        _navigationService.NavigateTo<MainWindow>();
+                    }
+                    else // Это менеджер
+                    {
+                        System.Diagnostics.Debug.WriteLine("Перенаправление на ManagerWindow.");
+                        _navigationService.NavigateTo<ManagerWindow>();
+                    }
+                    // --- 
+
+                    // Очищаем пароль
+                    passwordBox.Clear();
+                    System.Diagnostics.Debug.WriteLine("Пароль очищен.");
                 }
                 else
                 {
                     ErrorMessage = "Ошибка авторизации после регистрации";
+                    System.Diagnostics.Debug.WriteLine(ErrorMessage);
                 }
             }
             catch (InvalidOperationException ex)
             {
                 ErrorMessage = ex.Message;
+                System.Diagnostics.Debug.WriteLine($"InvalidOperationException: {ex.Message}");
             }
             catch (Exception ex)
             {
                 ErrorMessage = $"Ошибка регистрации: {ex.Message}";
+                System.Diagnostics.Debug.WriteLine($"Общее исключение: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Стек вызова: {ex.StackTrace}");
             }
         }
         // ...
 
         public event PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string? name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }

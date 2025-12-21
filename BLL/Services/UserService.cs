@@ -40,10 +40,10 @@ namespace BLL.Services
             return userDto;
         }
 
+        // BLL/Services/UserService.cs
+        // ...
         public async Task<int> RegisterAsync(UserCreateDto dto)
         {
-            Debug.WriteLine($"UserService.RegisterAsync вызван. Login: {dto.Login}, IsClient: {dto.IsClient}");
-
             // Check if login already exists
             var existing = await _userReadRepository.GetByLoginAsync(dto.Login);
             if (existing != null)
@@ -60,29 +60,40 @@ namespace BLL.Services
                 LastName = dto.LastName,
                 MiddleName = dto.MiddleName,
                 PhoneNumber = dto.PhoneNumber,
-                IsClient = dto.IsClient
+                IsClient = dto.IsClient // <-- Устанавливаем тип
             };
 
             var id = await _userWriteRepository.AddUserAsync(user);
-            Debug.WriteLine($"UserService: Id пользователя после сохранения: {id}");
 
             if (dto.IsClient)
             {
-                Debug.WriteLine($"UserService: Создание ClientProfile для Id={id}");
+                // Создаём ClientProfile
                 var profile = new ClientProfile
                 {
-                    Id = id, // <--- Убедитесь, что это правильный Id
+                    Id = id, // Id совпадает с Id User
                     Passport = dto.Passport,
                     DriverLicense = dto.DriverLicense,
                     DrivingExperience = dto.DrivingExperience
                 };
 
                 await _userWriteRepository.AddClientProfileAsync(profile);
-                Debug.WriteLine($"UserService: ClientProfile для Id={id} отправлен на сохранение.");
+            }
+            else
+            {
+                // Создаём Manager
+                var manager = new Manager
+                {
+                    Id = id // Id совпадает с Id User
+                            // Другие поля Manager, если есть, заполняем здесь
+                            // Например, может быть поле Position, но в текущей схеме только Id
+                };
+
+                await _userWriteRepository.AddManagerAsync(manager); // <-- Нужно добавить этот метод
             }
 
             return id;
         }
+        // ...
 
         public async Task<UserDto?> GetByIdAsync(int id)
         {

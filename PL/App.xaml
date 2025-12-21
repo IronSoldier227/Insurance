@@ -8,13 +8,11 @@
         <ResourceDictionary>
             <converters:IntToBoolConverter x:Key="IntToBoolConverter"/>
             <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
-            <!-- Добавим новые конвертеры -->
             <converters:EditingTitleConverter x:Key="EditingTitleConverter"/>
-            <!-- Должно быть здесь -->
             <converters:InvertedBoolToVisibilityConverter x:Key="InvertedBoolToVisibilityConverter"/>
             <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
             <converters:SaveButtonTextConverter x:Key="SaveButtonTextConverter"/>
-            <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+            <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
             <converters:InsuranceToIdConverter x:Key="InsuranceToIdConverter"/>
         </ResourceDictionary>
     </Application.Resources>
