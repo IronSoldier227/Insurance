@@ -13,5 +13,6 @@ namespace Interfaces.Services
         Task CancelPolicyAsync(int policyId, int cancelledByManagerId);
         Task<IEnumerable<Insurance>> GetPoliciesByVehicleId(int vehicleId);
         Task<IEnumerable<Insurance>> GetByClientIdAsync(int userId);
+        Task<AnnualPolicyRevenueReportDto> GetAnnualRevenueReportAsync(int year);
     }
 }

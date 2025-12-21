@@ -1,0 +1,61 @@
+﻿<!-- PL/Views/AnnualRevenueReportWindow.xaml -->
+<Window x:Class="PL.AnnualRevenueReportWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Отчёт по доходам от полисов за год" Height="400" Width="600"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Для ввода года -->
+            <RowDefinition Height="Auto"/>
+            <!-- Для кнопок -->
+            <RowDefinition Height="Auto"/>
+            <!-- Для ошибки -->
+            <RowDefinition Height="Auto"/>
+            <!-- Для заголовков -->
+            <RowDefinition Height="Auto"/>
+            <!-- Для данных -->
+            <RowDefinition Height="Auto"/>
+            <!-- Для данных -->
+            <RowDefinition Height="Auto"/>
+            <!-- Для данных -->
+            <RowDefinition Height="*"/>
+            <!-- Пустое пространство -->
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+            <TextBlock Text="Введите год:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <TextBox Text="{Binding YearInput, UpdateSourceTrigger=PropertyChanged}" Width="100" HorizontalAlignment="Left"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,10">
+            <Button Content="Загрузить отчёт" Command="{Binding LoadReportCommand}" Width="120" Margin="0,0,10,0"/>
+            <Button Content="Назад" Command="{Binding GoBackCommand}" Width="80"/>
+        </StackPanel>
+
+        <!-- Используем StringToVisibilityConverter для ErrorMessage -->
+        <TextBlock Grid.Row="2" Text="{Binding ErrorMessage}" Foreground="Red" Margin="0,0,0,10" TextWrapping="Wrap" Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
+
+        <!-- Используем ObjectToVisibilityConverter для Report -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,0,0,5" Visibility="{Binding Report, Converter={StaticResource ObjectToVisibilityConverter}}">
+            <TextBlock Text="Показатель" FontWeight="Bold" Width="200" Margin="0,0,20,0"/>
+            <TextBlock Text="Значение" FontWeight="Bold" Width="200"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="4" Orientation="Horizontal" Visibility="{Binding Report, Converter={StaticResource ObjectToVisibilityConverter}}">
+            <TextBlock Text="Год:" Width="200" Margin="0,0,20,0"/>
+            <TextBlock Text="{Binding Report.Year}" Width="200"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="5" Orientation="Horizontal" Visibility="{Binding Report, Converter={StaticResource ObjectToVisibilityConverter}}">
+            <TextBlock Text="Количество оформленных полисов:" Width="200" Margin="0,0,20,0"/>
+            <TextBlock Text="{Binding Report.TotalPoliciesCount}" Width="200"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="6" Orientation="Horizontal" Visibility="{Binding Report, Converter={StaticResource ObjectToVisibilityConverter}}">
+            <TextBlock Text="Общий доход (руб.):" Width="200" Margin="0,0,20,0"/>
+            <TextBlock Text="{Binding Report.TotalRevenue, StringFormat={}{0:N2}}" Width="200"/>
+        </StackPanel>
+    </Grid>
+</Window>

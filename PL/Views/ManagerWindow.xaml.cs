@@ -58,9 +58,14 @@ namespace PL
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string? name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void OnApproveClaimsClick(object sender, RoutedEventArgs e)
         {
+            _navigationService.NavigateTo<ApproveClaimsWindow>();
+        }
 
+        private void OnAnnualRevenueReportClick(object sender, RoutedEventArgs e)
+        {
+            _navigationService.NavigateTo<AnnualRevenueReportWindow>();
         }
     }
 }

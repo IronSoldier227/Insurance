@@ -60,6 +60,12 @@ namespace PL
             services.AddScoped<IReportService, ReportService>();
             services.AddTransient<ReportsWindow>();
             services.AddTransient<ReportsViewModel>();
+            services.AddScoped<IPaymentService, PaymentService>();
+            services.AddTransient<ApproveClaimsWindow>();
+            services.AddTransient<ApproveClaimsViewModel>();
+            services.AddScoped<IReportService, ReportService>(); // <-- Регистрируем IReportService
+            services.AddTransient<AnnualRevenueReportWindow>(); // <-- Регистрируем окно
+            services.AddTransient<AnnualRevenueReportViewModel>(); // <-- Регистрируем ViewModel
 
             // Окна - НЕ регистрируем как Transient, т.к. NavigationService сам их создает
             // services.AddTransient<LoginWindow>(); // <-- УБРАТЬ

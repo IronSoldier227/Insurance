@@ -17,6 +17,8 @@ namespace BLL.Services
             _claimRepository = claimRepository;
         }
 
+
+
         public async Task<IEnumerable<Claim>> GetByClientIdAsync(int clientId)
         {
             var list = await _claimRepository.GetByClientIdAsync(clientId);
@@ -98,27 +100,35 @@ namespace BLL.Services
                 c.StatusId = 3; // 3 = rejected
                 c.ProcessedBy = managerId;
                 _claimRepository.Update(c);
-            }
+            }   
         }
 
         public async Task<IEnumerable<Claim>> GetAllClaimsAsync()
         {
-            // Предположим, у IClaimRepository есть метод GetAllWithPolicyAndVehicleAsync
-            var list = await _claimRepository.GetAllWithPolicyAndVehicleAsync();
+            var list = await _claimRepository.GetAllWithRelatedDataAsync();
             return list.Select(c => new Claim
             {
                 Id = c.Id,
                 PolicyId = c.PolicyId,
-                Policy = new Insurance // Заполнить минимально для получения Vehicle.ClientId
-                {
-                    Vehicle = new VehicleDto { ClientId = c.Policy.Vehicle.ClientId }
-                },
+                PolicyNumber = c.Policy?.PolicyNumber ?? "N/A", // Убедитесь, что Policy подгружено
                 StatusId = c.StatusId,
+                StatusName = GetStatusName(c.StatusId), // Убедитесь, что этот метод есть
                 ClaimDate = c.ClaimDate,
                 Description = c.Description,
                 Location = c.Location,
                 EstimatedDamage = c.EstimatedDamage
             }).ToList();
+        }
+
+        private string GetStatusName(int statusId)
+        {
+            return statusId switch
+            {
+                1 => "Отправлен",
+                2 => "Одобрено",
+                3 => "Отклонено",
+                _ => "Неизвестно"
+            };
         }
     }
 }

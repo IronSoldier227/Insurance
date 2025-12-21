@@ -4,16 +4,28 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Interfaces.Repository;
 
 namespace DAL.Repositories
 {
-    public class ClaimRepository : Interfaces.Repository.IClaimRepository
+    public class ClaimRepository : IClaimRepository
     {
         private readonly InsuranceDbContext _context;
 
         public ClaimRepository(InsuranceDbContext context)
         {
             _context = context;
+        }
+
+        public async Task<IEnumerable<InsuranceClaim>> GetAllWithRelatedDataAsync()
+        {
+            return await _context.InsuranceClaims
+                .Include(c => c.Policy) // Подгружаем связанный полис
+                    .ThenInclude(p => p.Vehicle) // Подгружаем машину из полиса
+                        .ThenInclude(v => v.Model) // Подгружаем модель машины
+                            .ThenInclude(m => m.Brand) // Подгружаем марку машины
+                .Include(c => c.Status) // Подгружаем связанный статус
+                .ToListAsync();
         }
 
         public async Task AddAsync(InsuranceClaim claim)

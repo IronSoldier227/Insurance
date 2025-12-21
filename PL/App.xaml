@@ -14,6 +14,7 @@
             <converters:SaveButtonTextConverter x:Key="SaveButtonTextConverter"/>
             <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
             <converters:InsuranceToIdConverter x:Key="InsuranceToIdConverter"/>
+            <converters:ObjectToVisibilityConverter x:Key="ObjectToVisibilityConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

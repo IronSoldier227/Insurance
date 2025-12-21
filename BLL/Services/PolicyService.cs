@@ -7,19 +7,21 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DAL.Context;
 
 namespace BLL.Services
 {
     public class PolicyService : IPolicyService
     {
-        private readonly Interfaces.Repository.IPolicyRepository _policyRepository;
+        private readonly IPolicyRepository _policyRepository;
+        private readonly InsuranceDbContext _context;
 
-        public PolicyService(Interfaces.Repository.IPolicyRepository policyRepository)
+        public PolicyService(IPolicyRepository policyRepository, InsuranceDbContext context)
         {
             _policyRepository = policyRepository;
+            _context = context;
         }
 
-        // PolicyService.cs - УДАЛИТЕ TotalPrice из создания сущности
         public async Task<int> CreatePolicyAsync(Insurance policyDto)
         {
             Console.WriteLine($"=== СОЗДАНИЕ ПОЛИСА ===");
@@ -120,6 +122,24 @@ namespace BLL.Services
                 ExperienceCoefficient = p.ExperienceCoefficient,
                 BonusMalusCoefficient = p.BonusMalusCoefficient
             };
+        }
+
+        public async Task<AnnualPolicyRevenueReportDto> GetAnnualRevenueReportAsync(int year)
+        {
+            // Выполняем запрос к БД
+            var report = await _context.InsurancePolicies
+                .Where(p => p.StartDate.Year == year) // Полис оформлен в году
+                .GroupBy(p => 1) // Группируем всё в одну группу для агрегации
+                .Select(g => new AnnualPolicyRevenueReportDto
+                {
+                    Year = year,
+                    TotalPoliciesCount = g.Count(), // Количество полисов
+                    TotalRevenue = g.Sum(p => p.TotalPrice) // Сумма TotalPrice
+                })
+                .FirstOrDefaultAsync(); // Получаем первую (и единственную) группу или null
+
+            // Если за год нет полисов, возвращаем DTO с нулями
+            return report ?? new AnnualPolicyRevenueReportDto { Year = year, TotalPoliciesCount = 0, TotalRevenue = 0 };
         }
 
         public async Task CancelPolicyAsync(int policyId, int cancelledByManagerId)
