@@ -2,12 +2,47 @@
 <Window x:Class="PL.ManagerWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:PL"
         Title="Панель менеджера" Height="450" Width="800"
         WindowStartupLocation="CenterScreen">
-    <Grid>
-        <TextBlock Text="Добро пожаловать, Менеджер!" 
-                   FontSize="24" 
-                   HorizontalAlignment="Center" 
-                   VerticalAlignment="Center"/>
-    </Grid>
+
+    <DockPanel>
+        <!-- Меню -->
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="Файл">
+                <MenuItem Header="Назад" Command="{Binding GoBackCommand}"/>
+                <MenuItem Header="Выход" Command="{Binding LogoutCommand}"/>
+            </MenuItem>
+            <!-- Добавляем меню "Отчёты" -->
+            <MenuItem Header="Отчёты">
+                <MenuItem Header="Общая сумма выплат за год" Click="OnReportsClick"/>
+            </MenuItem>
+        </Menu>
+
+        <!-- Основное содержимое -->
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock x:Name="WelcomeText" 
+                      Text="Добро пожаловать, Менеджер!" 
+                      FontSize="24" 
+                      HorizontalAlignment="Center" 
+                      VerticalAlignment="Center"
+                      Grid.Row="0"/>
+
+            <StackPanel Grid.Row="1" 
+                       HorizontalAlignment="Center" 
+                       VerticalAlignment="Center">
+                <!-- Можно добавить другие кнопки для менеджера -->
+                <Button Content="Отчёты по выплатам" 
+                       Width="200" 
+                       Height="40" 
+                       Margin="0,10"
+                       Click="OnReportsClick"/>
+            </StackPanel>
+        </Grid>
+    </DockPanel>
 </Window>

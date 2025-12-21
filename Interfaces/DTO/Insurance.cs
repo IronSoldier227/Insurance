@@ -36,5 +36,7 @@ namespace Interfaces.DTO
         public string VehicleBrand { get; set; } = null!; // Марка автомобиля
         public string VehicleModel { get; set; } = null!; // Модель автомобиля
         public string StatusName { get; set; } = null!; // Например, "Активен"
+
+        public VehicleDto Vehicle { get; set; }
     }
 }

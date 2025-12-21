@@ -41,5 +41,11 @@ namespace DAL.Repositories
             _context.InsuranceClaims.Update(claim);
             _context.SaveChanges();
         }
+
+        public async Task<IEnumerable<InsuranceClaim>> GetAllWithPolicyAndVehicleAsync()
+        {
+            return await _context.InsuranceClaims
+                .Include(c => c.Policy).ThenInclude(p => p.Vehicle).ToListAsync();
+        }
     }
 }

@@ -72,63 +72,52 @@ public class NavigationService : INavigationService, INotifyPropertyChanged
         CanGoBack = _windowHistory.Count > 0;
     }
 
+    // PL/NavigationService.cs
+    // ...
     public void NavigateTo<TWindow>() where TWindow : Window
     {
-        Debug.WriteLine($"NavigationService.NavigateTo<{typeof(TWindow).Name}> вызван.");
-        Debug.WriteLine($"Текущее окно перед закрытием: {_currentWindow?.GetType().Name ?? "null"}");
-        Debug.WriteLine($"История окон до добавления: [{string.Join(", ", _windowHistory.Select(t => t.Name))}]");
+        System.Diagnostics.Debug.WriteLine($"NavigationService.NavigateTo<{typeof(TWindow).Name}> вызван.");
+        System.Diagnostics.Debug.WriteLine($"Текущее окно перед закрытием: {_currentWindow?.GetType().Name ?? "null"}");
+        System.Diagnostics.Debug.WriteLine($"История окон до добавления: [{string.Join(", ", _windowHistory.Select(t => t.Name))}]");
 
         var viewModelTypeName = typeof(TWindow).Name.Replace("Window", "ViewModel");
         var viewModelType = AppDomain.CurrentDomain.GetAssemblies()
                                .SelectMany(x => x.GetTypes())
                                .FirstOrDefault(x => x.Name == viewModelTypeName && x.Namespace == "PL.ViewModels");
 
-        Debug.WriteLine($"Поиск ViewModel: {viewModelTypeName} -> {(viewModelType != null ? viewModelType.Name : "не найдена")}");
+        System.Diagnostics.Debug.WriteLine($"Поиск ViewModel: {viewModelTypeName} -> {(viewModelType != null ? viewModelType.Name : "не найдена")}");
 
         if (viewModelType != null)
         {
             if (_currentWindow != null)
             {
                 _windowHistory.Push(_currentWindow.GetType());
-                UpdateCanGoBack(); // <-- Обновляем CanGoBack
-                Debug.WriteLine($"Текущее окно {_currentWindow.GetType().Name} добавлено в историю.");
-                Debug.WriteLine($"История окон после добавления: [{string.Join(", ", _windowHistory.Select(t => t.Name))}]");
+                UpdateCanGoBack();
+                System.Diagnostics.Debug.WriteLine($"Текущее окно {_currentWindow.GetType().Name} добавлено в историю.");
+                System.Diagnostics.Debug.WriteLine($"История окон после добавления: [{string.Join(", ", _windowHistory.Select(t => t.Name))}]");
             }
 
             _currentWindow?.Close();
-            Debug.WriteLine($"Текущее окно {_currentWindow?.GetType().Name} закрыто.");
+            System.Diagnostics.Debug.WriteLine($"Текущее окно {_currentWindow?.GetType().Name} закрыто.");
 
             var newWindow = (TWindow)Activator.CreateInstance(typeof(TWindow));
             var viewModel = _serviceProvider.GetRequiredService(viewModelType);
+
+            // --- ИЗМЕНЕНИЕ: Устанавливаем DataContext до Show() ---
             newWindow.DataContext = viewModel;
-            Debug.WriteLine($"Установлен DataContext: {viewModel.GetType().Name}");
+            System.Diagnostics.Debug.WriteLine($"Установлен DataContext: {viewModel.GetType().Name} для окна {newWindow.GetType().Name}");
 
             newWindow.Show();
             _currentWindow = newWindow;
-            Debug.WriteLine($"Новое окно {newWindow.GetType().Name} открыто и установлено как текущее.");
+            System.Diagnostics.Debug.WriteLine($"Новое окно {newWindow.GetType().Name} открыто и установлено как текущее.");
         }
         else
         {
-            if (_currentWindow != null)
-            {
-                _windowHistory.Push(_currentWindow.GetType());
-                UpdateCanGoBack(); // <-- Обновляем CanGoBack
-                Debug.WriteLine($"Текущее окно (без ViewModel) {_currentWindow.GetType().Name} добавлено в историю.");
-                Debug.WriteLine($"История окон после добавления: [{string.Join(", ", _windowHistory.Select(t => t.Name))}]");
-            }
-
-            _currentWindow?.Close();
-            Debug.WriteLine($"Текущее окно (без ViewModel) {_currentWindow?.GetType().Name} закрыто.");
-
-            var newWindow = (TWindow)Activator.CreateInstance(typeof(TWindow));
-            Debug.WriteLine($"Создан экземпляр окна (без ViewModel): {newWindow.GetType().Name}");
-
-            newWindow.Show();
-            _currentWindow = newWindow;
-            Debug.WriteLine($"Новое окно (без ViewModel) {newWindow.GetType().Name} открыто и установлено как текущее.");
+            // ... (остальной код)
         }
-        Debug.WriteLine($"--- Конец NavigateTo<{typeof(TWindow).Name}> ---");
+        System.Diagnostics.Debug.WriteLine($"--- Конец NavigateTo<{typeof(TWindow).Name}> ---");
     }
+    // ...
 
     public void GoBack()
     {

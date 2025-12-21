@@ -100,5 +100,25 @@ namespace BLL.Services
                 _claimRepository.Update(c);
             }
         }
+
+        public async Task<IEnumerable<Claim>> GetAllClaimsAsync()
+        {
+            // Предположим, у IClaimRepository есть метод GetAllWithPolicyAndVehicleAsync
+            var list = await _claimRepository.GetAllWithPolicyAndVehicleAsync();
+            return list.Select(c => new Claim
+            {
+                Id = c.Id,
+                PolicyId = c.PolicyId,
+                Policy = new Insurance // Заполнить минимально для получения Vehicle.ClientId
+                {
+                    Vehicle = new VehicleDto { ClientId = c.Policy.Vehicle.ClientId }
+                },
+                StatusId = c.StatusId,
+                ClaimDate = c.ClaimDate,
+                Description = c.Description,
+                Location = c.Location,
+                EstimatedDamage = c.EstimatedDamage
+            }).ToList();
+        }
     }
 }

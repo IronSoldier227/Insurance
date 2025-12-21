@@ -14,5 +14,6 @@ namespace Interfaces.DTO
         public double EstimatedDamage { get; set; }
         public string PolicyNumber { get; set; } = null!;
         public string StatusName { get; set; } = null!;
+        public Insurance Policy { get; set; }
     }
 }

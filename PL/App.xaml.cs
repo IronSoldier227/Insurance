@@ -57,6 +57,9 @@ namespace PL
             services.AddScoped<IClientProfileService, ClientProfileService>();
 
             services.AddSingleton<INavigationService, NavigationService>();
+            services.AddScoped<IReportService, ReportService>();
+            services.AddTransient<ReportsWindow>();
+            services.AddTransient<ReportsViewModel>();
 
             // Окна - НЕ регистрируем как Transient, т.к. NavigationService сам их создает
             // services.AddTransient<LoginWindow>(); // <-- УБРАТЬ
@@ -82,6 +85,7 @@ namespace PL
             services.AddTransient<ClaimsViewModel>();
             services.AddTransient<RegisterClaimViewModel>();
             services.AddTransient<PaymentsViewModel>();
+
         }
 
         protected override void OnStartup(StartupEventArgs e)

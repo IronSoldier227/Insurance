@@ -10,5 +10,6 @@ namespace Interfaces.Repository
         Task<InsuranceClaim?> GetByIdAsync(int id);
         Task AddAsync(InsuranceClaim claim);
         void Update(InsuranceClaim claim);
+        Task<IEnumerable<InsuranceClaim>> GetAllWithPolicyAndVehicleAsync();
     }
 }

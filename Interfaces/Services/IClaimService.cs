@@ -11,5 +11,6 @@ namespace Interfaces.Services
         Task<IEnumerable<Claim>> GetByClientIdAsync(int clientId);
         Task<Claim?> GetClaimByIdAsync(int id);
         Task DecideClaimAsync(int claimId, int managerId, double? payoutAmount);
+        Task<IEnumerable<Claim>> GetAllClaimsAsync();
     }
 }
