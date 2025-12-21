@@ -1,0 +1,134 @@
+﻿// PL/ViewModels/PaymentsViewModel.cs
+using Core.Entities; // Для PaymentForClaim
+using Interfaces.DTO; // Для Claim, User, Insurance
+using Interfaces.Repository; // Для IRepository
+using Interfaces.Services; // Для ICurrentUserService, INavigationService, IUserService, IClaimService, IPolicyService
+using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using System.Windows.Input;
+
+namespace PL.ViewModels
+{
+    public class PaymentsViewModel : INotifyPropertyChanged
+    {
+        private readonly IRepository<PaymentForClaim> _paymentRepository;
+        private readonly IClaimService _claimService;
+        private readonly IPolicyService _policyService; // <-- Новый сервис
+        private readonly IUserService _userService;
+        private readonly ICurrentUserService _currentUserService;
+        private readonly INavigationService _navigationService;
+
+        private string _errorMessage = string.Empty;
+        public string ErrorMessage
+        {
+            get => _errorMessage;
+            set { _errorMessage = value; OnPropertyChanged(); }
+        }
+
+        public ICommand LoadPaymentsCommand { get; }
+        public ICommand GoBackCommand { get; }
+
+        private ObservableCollection<PaymentDto> _payments = new ObservableCollection<PaymentDto>();
+        public ObservableCollection<PaymentDto> Payments
+        {
+            get => _payments;
+            set { _payments = value; OnPropertyChanged(); }
+        }
+
+        public PaymentsViewModel(
+            IRepository<PaymentForClaim> paymentRepository,
+            IClaimService claimService,
+            IPolicyService policyService, // <-- Внедряем IPolicyService
+            IUserService userService,
+            ICurrentUserService currentUserService,
+            INavigationService navigationService)
+        {
+            _paymentRepository = paymentRepository;
+            _claimService = claimService;
+            _policyService = policyService; // <-- Сохраняем
+            _userService = userService;
+            _currentUserService = currentUserService;
+            _navigationService = navigationService;
+
+            LoadPaymentsCommand = new RelayCommand(async _ => await LoadPaymentsAsync(), (Func<bool>?)null);
+            GoBackCommand = new RelayCommand(_ => _navigationService.GoBack(), () => _navigationService.CanGoBack);
+
+            _ = LoadPaymentsAsync();
+        }
+
+        private async Task LoadPaymentsAsync()
+        {
+            ErrorMessage = string.Empty;
+            var user = _currentUserService.GetCurrentUser();
+            if (user == null)
+            {
+                ErrorMessage = "Пользователь не авторизован";
+                return;
+            }
+
+            try
+            {
+                // Получаем все заявки пользователя
+                var userClaims = await _claimService.GetByClientIdAsync(user.Id);
+                var claimIds = userClaims.ToDictionary(c => c.Id); // Для быстрого поиска по Id
+
+                // Получаем все выплаты, связанные с его заявками
+                var allPayments = await _paymentRepository.GetAllAsync();
+                var userPayments = allPayments.Where(p => claimIds.ContainsKey(p.ClaimId)).ToList();
+
+                // Получаем все полисы пользователя, чтобы связать их с заявками
+                var userPolicies = (await _policyService.GetByClientIdAsync(user.Id)).ToDictionary(p => p.Id); // Для быстрого поиска по Id
+
+                Payments.Clear();
+                foreach (var payment in userPayments)
+                {
+                    // Получаем данные по заявке
+                    var claim = claimIds.TryGetValue(payment.ClaimId, out var foundClaim) ? foundClaim : null;
+                    string policyNumber = "N/A";
+                    DateTime claimDate = DateTime.MinValue;
+
+                    if (claim != null)
+                    {
+                        claimDate = claim.ClaimDate; // Дата заявки
+
+                        // Получаем номер полиса, связанного с заявкой
+                        var policy = userPolicies.TryGetValue(claim.PolicyId, out var foundPolicy) ? foundPolicy : null;
+                        policyNumber = policy?.PolicyNumber ?? "N/A";
+                    }
+
+                    // Получаем ФИО менеджера по AuthorizedBy
+                    string managerName = "N/A";
+                        var managerUser = await _userService.GetByIdAsync(payment.AuthorizedBy);
+                        if (managerUser != null)
+                        {
+                            managerName = $"{managerUser.FirstName} {managerUser.LastName} {managerUser.MiddleName}".Trim();
+                        }
+
+                    Payments.Add(new PaymentDto
+                    {
+                        Id = payment.Id,
+                        ClaimId = payment.ClaimId,
+                        Amount = payment.Amount,
+                        PaymentDate = payment.PaymentDate,
+                        AuthorizedByManagerName = managerName,
+                        // --- Устанавливаем новые поля ---
+                        ClaimDate = claimDate,
+                        PolicyNumber = policyNumber
+                        // ---
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Ошибка загрузки выплат: {ex.Message}";
+            }
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string? name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+    }
+}

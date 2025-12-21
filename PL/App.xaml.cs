@@ -53,6 +53,7 @@ namespace PL
             services.AddScoped<Interfaces.Services.IPolicyService, BLL.Services.PolicyService>();
             services.AddScoped<Interfaces.Services.IClaimService, BLL.Services.ClaimService>();
             services.AddScoped<Interfaces.Services.ICatalogService, BLL.Services.CatalogService>();
+            services.AddScoped<IUserService, UserService>();
             services.AddScoped<IClientProfileService, ClientProfileService>();
 
             services.AddSingleton<INavigationService, NavigationService>();
@@ -65,17 +66,20 @@ namespace PL
             services.AddTransient<AddEditVehicleWindow>();
             services.AddTransient<CreatePolicyWindow>();
             services.AddTransient<PoliciesWindow>();
-            services.AddTransient<PoliciesViewModel>();
+            services.AddTransient<ClaimsWindow>();
+            services.AddTransient<RegisterClaimWindow>();
+            services.AddTransient<PaymentsWindow>();  
 
             // ViewModels
+            services.AddTransient<MainViewModel>();
+            services.AddTransient<VehiclesViewModel>(); 
             services.AddTransient<LoginViewModel>();
             services.AddTransient<RegisterViewModel>();
-            services.AddTransient<VehiclesViewModel>(); 
             services.AddTransient<MainViewModel>();
-            services.AddTransient<ClaimsWindow>();
+            services.AddTransient<PoliciesViewModel>();
             services.AddTransient<ClaimsViewModel>();
-            services.AddTransient<RegisterClaimWindow>();
             services.AddTransient<RegisterClaimViewModel>();
+            services.AddTransient<PaymentsViewModel>();
         }
 
         protected override void OnStartup(StartupEventArgs e)

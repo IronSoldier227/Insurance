@@ -22,5 +22,10 @@ namespace DAL.Repositories
 
             return new UserDto { Id = user.Id, Login = user.Login, IsClient = user.IsClient, PasswordHash = user.PasswordHash };
         }
+
+        public async Task<User?> GetByIdAsync(int id)
+        {
+            return await _context.Users.FindAsync(id); // Или с Include, если нужно ClientProfile/Manager
+        }
     }
 }

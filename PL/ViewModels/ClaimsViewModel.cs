@@ -166,7 +166,7 @@ namespace PL.ViewModels
                     break;
                 case "Отклонено":
                     filtered = filtered.Where(c => c.StatusId == 3);
-                    break;
+                    break; 
                     // "Все" означает, что фильтр не применяется
             }
 

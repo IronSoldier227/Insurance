@@ -86,8 +86,21 @@ namespace BLL.Services
 
         public async Task<UserDto?> GetByIdAsync(int id)
         {
-            // Not implemented
-            return null;
+            var userEntity = await _userReadRepository.GetByIdAsync(id); // Предположим, у вас есть такой метод в IUserRepository
+            if (userEntity == null) return null;
+
+            // Маппим в DTO
+            return new UserDto
+            {
+                Id = userEntity.Id,
+                Login = userEntity.Login,
+                IsClient = userEntity.IsClient,
+                FirstName = userEntity.FirstName,
+                LastName = userEntity.LastName,
+                MiddleName = userEntity.MiddleName,
+                PhoneNumber = userEntity.PhoneNumber
+                // PasswordHash обычно не передаётся в DTO для отображения
+            };
         }
 
         private static string ComputeHash(string input)

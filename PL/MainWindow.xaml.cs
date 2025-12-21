@@ -73,6 +73,11 @@ namespace PL
             _navigationService.NavigateTo<RegisterClaimWindow>();
         }
 
+        private void OnMyPaymentsClick(object sender, RoutedEventArgs e)
+        {
+            _navigationService.NavigateTo<PaymentsWindow>();
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string? name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
