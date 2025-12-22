@@ -3,96 +3,113 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:converters="clr-namespace:PL.Converters"
-    Title="{Binding IsEditingMode, Converter={StaticResource EditingTitleConverter}}" Height="500" Width="450"
-        WindowStartupLocation="CenterOwner">
+        Title="{Binding IsEditingMode, Converter={StaticResource EditingTitleConverter}}" Height="600" Width="500"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Style="{StaticResource CustomWindowStyle}">
 
-    <Grid Margin="10">
+    <Grid Margin="30">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
+            <!-- Прокручиваемое содержимое -->
             <RowDefinition Height="Auto"/>
+            <!-- Кнопки -->
         </Grid.RowDefinitions>
 
-        <ScrollViewer Grid.Row="0">
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <StackPanel>
                 <!-- Поля только для чтения в режиме редактирования -->
-                <TextBlock Text="Марка" FontWeight="Bold" Visibility="{Binding IsEditingMode, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                <Label Content="Марка" Visibility="{Binding IsEditingMode, Converter={StaticResource BoolToVisibilityConverter}}" Margin="0,0,0,5"/>
                 <TextBlock Text="{Binding BrandName}" Margin="0,0,0,10" Visibility="{Binding IsEditingMode, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
-                <TextBlock Text="Модель" FontWeight="Bold" Visibility="{Binding IsEditingMode, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                <Label Content="Модель" Visibility="{Binding IsEditingMode, Converter={StaticResource BoolToVisibilityConverter}}" Margin="0,0,0,5"/>
                 <TextBlock Text="{Binding ModelName}" Margin="0,0,0,10" Visibility="{Binding IsEditingMode, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
-                <TextBlock Text="Год выпуска" FontWeight="Bold" Visibility="{Binding IsEditingMode, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                <Label Content="Год выпуска" Visibility="{Binding IsEditingMode, Converter={StaticResource BoolToVisibilityConverter}}" Margin="0,0,0,5"/>
                 <TextBlock Text="{Binding YearOfProductionText}" Margin="0,0,0,10" Visibility="{Binding IsEditingMode, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
-                <TextBlock Text="VIN номер" FontWeight="Bold" Visibility="{Binding IsEditingMode, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                <Label Content="VIN номер" Visibility="{Binding IsEditingMode, Converter={StaticResource BoolToVisibilityConverter}}" Margin="0,0,0,5"/>
                 <TextBlock Text="{Binding VinText}" Margin="0,0,0,10" Visibility="{Binding IsEditingMode, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
-                <TextBlock Text="Категория" FontWeight="Bold" Visibility="{Binding IsEditingMode, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                <Label Content="Категория" Visibility="{Binding IsEditingMode, Converter={StaticResource BoolToVisibilityConverter}}" Margin="0,0,0,5"/>
                 <TextBlock Text="{Binding CategoryText}" Margin="0,0,0,10" Visibility="{Binding IsEditingMode, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
                 <!-- ComboBox для Категории: активен при добавлении, неактивен при редактировании -->
-                <TextBlock Text="Категория" FontWeight="Bold" Margin="0,10,0,0" Visibility="{Binding IsEditingMode, Converter={StaticResource InvertedBoolToVisibilityConverter}}"/>
+                <Label Content="Категория" Margin="0,0,0,5" Visibility="{Binding IsEditingMode, Converter={StaticResource InvertedBoolToVisibilityConverter} }"/>
                 <ComboBox ItemsSource="{Binding Categories}"
                          SelectedItem="{Binding SelectedCategory}"
                          IsEnabled="{Binding IsEditingMode, Converter={StaticResource InverseBooleanConverter}}" 
-                    Visibility="{Binding IsEditingMode, Converter={StaticResource InvertedBoolToVisibilityConverter}}"/>
-                    <!-- Видим только при добавлении -->
+                         Style="{StaticResource CustomComboBoxStyle}"
+                         Visibility="{Binding IsEditingMode, Converter={StaticResource InvertedBoolToVisibilityConverter} }"/>
 
-                    <!-- Поля для редактирования (доступны в обоих режимах, но ComboBox неактивны в режиме редактирования) -->
-                    <TextBlock Text="Цвет" FontWeight="Bold" Margin="0,10,0,0"/>
-                    <TextBox Text="{Binding Color, UpdateSourceTrigger=PropertyChanged}"/>
+                <!-- Поля для редактирования (доступны в обоих режимах, но ComboBox неактивны в режиме редактирования) -->
+                <Label Content="Цвет" Margin="0,0,0,5"/>
+                <TextBox Text="{Binding Color, UpdateSourceTrigger=PropertyChanged}" 
+                         Style="{StaticResource CustomTextBoxStyle}" 
+                         Margin="0,0,0,10"/>
 
-                    <TextBlock Text="Гос. номер" FontWeight="Bold" Margin="0,10,0,0"/>
-                    <TextBox Text="{Binding PlateNum, UpdateSourceTrigger=PropertyChanged}"/>
+                <Label Content="Гос. номер" Margin="0,0,0,5"/>
+                <TextBox Text="{Binding PlateNum, UpdateSourceTrigger=PropertyChanged}" 
+                         Style="{StaticResource CustomTextBoxStyle}" 
+                         Margin="0,0,0,10"/>
 
-                    <TextBlock Text="Мощность (л.с.)" FontWeight="Bold" Margin="0,10,0,0"/>
-                    <TextBox Text="{Binding PowerHp, UpdateSourceTrigger=PropertyChanged}"/>
-                    <!-- Доступно для редактирования в обоих режимах -->
+                <Label Content="Мощность (л.с.)" Margin="0,0,0,5"/>
+                <TextBox Text="{Binding PowerHp, UpdateSourceTrigger=PropertyChanged}" 
+                         Style="{StaticResource CustomTextBoxStyle}" 
+                         Margin="0,0,0,10"/>
 
-                    <!-- ComboBox для марки и модели - активны только при добавлении -->
-                    <TextBlock Text="Марка" FontWeight="Bold" Margin="0,10,0,0" Visibility="{Binding IsEditingMode, Converter={StaticResource InvertedBoolToVisibilityConverter}}"/>
-                    <ComboBox ItemsSource="{Binding Brands}"
+                <!-- ComboBox для марки и модели - активны только при добавлении -->
+                <Label Content="Марка" Margin="0,0,0,5" Visibility="{Binding IsEditingMode, Converter={StaticResource InvertedBoolToVisibilityConverter} }"/>
+                <ComboBox ItemsSource="{Binding Brands}"
                          SelectedItem="{Binding SelectedBrand}"
                          DisplayMemberPath="Name"
                          IsEnabled="{Binding IsEditingMode, Converter={StaticResource InverseBooleanConverter}}" 
-                        Visibility="{Binding IsEditingMode, Converter={StaticResource InvertedBoolToVisibilityConverter}}"/>
+                         Style="{StaticResource CustomComboBoxStyle}"
+                         Visibility="{Binding IsEditingMode, Converter={StaticResource InvertedBoolToVisibilityConverter} }"/>
 
-                        <TextBlock Text="Модель" FontWeight="Bold" Margin="0,10,0,0" Visibility="{Binding IsEditingMode, Converter={StaticResource InvertedBoolToVisibilityConverter}}"/>
-                        <ComboBox ItemsSource="{Binding Models}"
+                <Label Content="Модель" Margin="0,0,0,5" Visibility="{Binding IsEditingMode, Converter={StaticResource InvertedBoolToVisibilityConverter} }"/>
+                <ComboBox ItemsSource="{Binding Models}"
                          SelectedItem="{Binding SelectedModel}"
                          DisplayMemberPath="Name"
                          IsEnabled="{Binding IsEditingMode, Converter={StaticResource InverseBooleanConverter}}" 
-                            Visibility="{Binding IsEditingMode, Converter={StaticResource InvertedBoolToVisibilityConverter}}"/>
+                         Style="{StaticResource CustomComboBoxStyle}"
+                         Visibility="{Binding IsEditingMode, Converter={StaticResource InvertedBoolToVisibilityConverter} }"/>
 
-                            <TextBlock Text="Год выпуска" FontWeight="Bold" Margin="0,10,0,0" Visibility="{Binding IsEditingMode, Converter={StaticResource InvertedBoolToVisibilityConverter}}"/>
-                            <TextBox Text="{Binding YearOfProduction, UpdateSourceTrigger=PropertyChanged}"
+                <Label Content="Год выпуска" Margin="0,0,0,5" Visibility="{Binding IsEditingMode, Converter={StaticResource InvertedBoolToVisibilityConverter} }"/>
+                <TextBox Text="{Binding YearOfProduction, UpdateSourceTrigger=PropertyChanged}"
                          IsEnabled="{Binding IsEditingMode, Converter={StaticResource InverseBooleanConverter}}" 
-                                Visibility="{Binding IsEditingMode, Converter={StaticResource InvertedBoolToVisibilityConverter}}"/>
+                         Style="{StaticResource CustomTextBoxStyle}"
+                         Visibility="{Binding IsEditingMode, Converter={StaticResource InvertedBoolToVisibilityConverter} }"/>
 
-                                <TextBlock Text="VIN номер" FontWeight="Bold" Margin="0,10,0,0" Visibility="{Binding IsEditingMode, Converter={StaticResource InvertedBoolToVisibilityConverter}}"/>
-                                <TextBox Text="{Binding Vin, UpdateSourceTrigger=PropertyChanged}"
+                <Label Content="VIN номер" Margin="0,0,0,5" Visibility="{Binding IsEditingMode, Converter={StaticResource InvertedBoolToVisibilityConverter} }"/>
+                <TextBox Text="{Binding Vin, UpdateSourceTrigger=PropertyChanged}"
                          IsEnabled="{Binding IsEditingMode, Converter={StaticResource InverseBooleanConverter}}"
-                                    Visibility="{Binding IsEditingMode, Converter={StaticResource InvertedBoolToVisibilityConverter}}"/>
+                         Style="{StaticResource CustomTextBoxStyle}"
+                         Visibility="{Binding IsEditingMode, Converter={StaticResource InvertedBoolToVisibilityConverter} }"/>
 
-                                    <!-- Сообщение об ошибке -->
-                                    <TextBlock Text="{Binding ErrorMessage}"
+                <!-- Сообщение об ошибке -->
+                <TextBlock Text="{Binding ErrorMessage}"
                           Foreground="Red"
                           Margin="0,10,0,0"
-                          TextWrapping="Wrap"/>
+                          TextWrapping="Wrap"
+                          Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
             </StackPanel>
         </ScrollViewer>
 
-        <!-- Кнопки -->
+        <!-- Кнопки (вне ScrollViewer) -->
         <StackPanel Grid.Row="1"
                    Orientation="Horizontal"
                    HorizontalAlignment="Right"
-                   Margin="0,10,0,0">
+                   Margin="0,20,0,20">
+            <!-- Отступ сверху и снизу -->
             <Button Content="Отмена"
                    Command="{Binding CancelCommand}"
+                   Style="{StaticResource CustomButtonStyle}"
                    Width="80"
                    Margin="0,0,10,0"/>
             <Button Content="{Binding IsEditingMode, Converter={StaticResource SaveButtonTextConverter}}"
                    Command="{Binding SaveCommand}"
+                   Style="{StaticResource CustomButtonStyle}"
                    Width="100"/>
         </StackPanel>
     </Grid>

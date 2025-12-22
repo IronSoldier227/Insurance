@@ -125,7 +125,12 @@ namespace PL.ViewModels
                     DataContext = viewModel,
                 };
 
-                bool? result = _dialogService.ShowDialog<AddEditVehicleWindow>();
+                if (addWindow.Owner != null)
+                {
+                    addWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                }
+
+                bool? result = addWindow.ShowDialog();
 
                 if (result == true)
                 {
@@ -241,7 +246,11 @@ namespace PL.ViewModels
                     SelectedVehicle.Id);
 
                 var insureWindow = new CreatePolicyWindow(viewModel);
-               
+                if (insureWindow.Owner != null)
+                {
+                    insureWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                }
+
                 bool? result = insureWindow.ShowDialog();
                 if (result == true)
                 {

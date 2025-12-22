@@ -10,6 +10,13 @@ namespace PL
         {
             InitializeComponent();
             this.DataContext = App.ServiceProvider.GetRequiredService<VehiclesViewModel>();
+            this.Loaded += async (sender, e) =>
+            {
+                if (this.DataContext is VehiclesViewModel vm)
+                {
+                    await vm.LoadVehiclesAsync();
+                }
+            };
         }
     }
 }

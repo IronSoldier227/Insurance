@@ -3,51 +3,87 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:converters="clr-namespace:PL.Converters" 
-    Title="Регистрация" Height="490" Width="400">
-    <Grid Margin="10">
+        Title="Регистрация" Height="500" Width="450"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Style="{StaticResource CustomWindowStyle}">
+
+    <Grid Margin="30">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <!-- Прокручиваемое содержимое -->
+            <RowDefinition Height="Auto"/>
+            <!-- Кнопка регистрации -->
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Vertical" Grid.Row="0">
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Orientation="Vertical">
 
-            <TextBlock Text="Тип пользователя" FontWeight="Bold" Margin="0,0,0,5"/>
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                <RadioButton Content="Клиент" IsChecked="{Binding IsClientType}" Margin="0,0,20,0"/>
-                <RadioButton Content="Менеджер" IsChecked="{Binding IsManagerType}"/>
+                <Label Content="Тип пользователя" FontWeight="Bold" Margin="0,0,0,5"/>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                    <RadioButton Content="Клиент" 
+                                 IsChecked="{Binding IsClientType}" 
+                                 Style="{StaticResource CustomRadioButtonStyle}"
+                                 Margin="0,0,20,0"/>
+                    <RadioButton Content="Менеджер" 
+                                 IsChecked="{Binding IsManagerType}" 
+                                 Style="{StaticResource CustomRadioButtonStyle}"/>
+                </StackPanel>
+
+                <Label Content="Логин" Margin="0,0,0,5"/>
+                <TextBox Text="{Binding Login, UpdateSourceTrigger=PropertyChanged}" 
+                         Style="{StaticResource CustomTextBoxStyle}"/>
+
+                <Label Content="Пароль" Margin="0,0,0,5"/>
+                <PasswordBox x:Name="PasswordBox" 
+                             Style="{StaticResource CustomPasswordBoxStyle}"/>
+
+                <Label Content="Имя" Margin="0,0,0,5"/>
+                <TextBox Text="{Binding FirstName, UpdateSourceTrigger=PropertyChanged}" 
+                         Style="{StaticResource CustomTextBoxStyle}"/>
+                <Label Content="Фамилия" Margin="0,0,0,5"/>
+                <TextBox Text="{Binding LastName, UpdateSourceTrigger=PropertyChanged}" 
+                         Style="{StaticResource CustomTextBoxStyle}"/>
+                <Label Content="Отчество" Margin="0,0,0,5"/>
+                <TextBox Text="{Binding MiddleName, UpdateSourceTrigger=PropertyChanged}" 
+                         Style="{StaticResource CustomTextBoxStyle}"/>
+                <Label Content="Номер телефона" Margin="0,0,0,5"/>
+                <TextBox Text="{Binding PhoneNumber, UpdateSourceTrigger=PropertyChanged}" 
+                         Style="{StaticResource CustomTextBoxStyle}"/>
+
+                <Label Content="Пасспорт" 
+                       Visibility="{Binding IsClientType, Converter={StaticResource BoolToVisibilityConverter}}" 
+                       Margin="0,10,0,5"/>
+                <TextBox Text="{Binding Passport, UpdateSourceTrigger=PropertyChanged}" 
+                         Visibility="{Binding IsClientType, Converter={StaticResource BoolToVisibilityConverter}}" 
+                         Style="{StaticResource CustomTextBoxStyle}"/>
+
+                <Label Content="Номер В/У" 
+                       Visibility="{Binding IsClientType, Converter={StaticResource BoolToVisibilityConverter}}" 
+                       Margin="0,10,0,5"/>
+                <TextBox Text="{Binding DriverLicense, UpdateSourceTrigger=PropertyChanged}" 
+                         Visibility="{Binding IsClientType, Converter={StaticResource BoolToVisibilityConverter}}" 
+                         Style="{StaticResource CustomTextBoxStyle}"/>
+
+                <Label Content="Стаж вождения" 
+                       Visibility="{Binding IsClientType, Converter={StaticResource BoolToVisibilityConverter}}" 
+                       Margin="0,10,0,5"/>
+                <TextBox Text="{Binding DrivingExperience, UpdateSourceTrigger=PropertyChanged, StringFormat=N0}" 
+                         Visibility="{Binding IsClientType, Converter={StaticResource BoolToVisibilityConverter}}" 
+                         Style="{StaticResource CustomTextBoxStyle}"/>
+
             </StackPanel>
+        </ScrollViewer>
 
-            <TextBlock Text="Логин"/>
-            <TextBox Text="{Binding Login, UpdateSourceTrigger=PropertyChanged}"/>
-
-            <TextBlock Text="Пароль"/>
-            <PasswordBox x:Name="PasswordBox"/>
-
-            <TextBlock Text="Имя"/>
-            <TextBox Text="{Binding FirstName}"/>
-            <TextBlock Text="Фамилия"/>
-            <TextBox Text="{Binding LastName}"/>
-            <TextBlock Text="Отчество"/>
-            <TextBox Text="{Binding MiddleName}"/>
-            <TextBlock Text="Номер телефона"/>
-            <TextBox Text="{Binding PhoneNumber}"/>
-
-            <TextBlock Text="Пасспорт" Visibility="{Binding IsClientType, Converter={StaticResource BoolToVisibilityConverter}}" Margin="0,10,0,0"/>
-            <TextBox Text="{Binding Passport}" Visibility="{Binding IsClientType, Converter={StaticResource BoolToVisibilityConverter}}"/>
-
-            <TextBlock Text="Номер В/У" Visibility="{Binding IsClientType, Converter={StaticResource BoolToVisibilityConverter}}" Margin="0,10,0,0"/>
-            <TextBox Text="{Binding DriverLicense}" Visibility="{Binding IsClientType, Converter={StaticResource BoolToVisibilityConverter}}"/>
-
-            <TextBlock Text="Стаж вождения" Visibility="{Binding IsClientType, Converter={StaticResource BoolToVisibilityConverter}}" Margin="0,10,0,0"/>
-            <TextBox Text="{Binding DrivingExperience}" Visibility="{Binding IsClientType, Converter={StaticResource BoolToVisibilityConverter}}"/>
-
-            <Button Content="Зарегистрироваться" 
-                    HorizontalAlignment="Right" 
-                    Width="128" 
-                    Command="{Binding RegisterCommand}" 
-                    CommandParameter="{x:Reference PasswordBox}" 
-                Margin="0,10,0,0"/>
-        </StackPanel>
+        <!-- Кнопка регистрации (вне ScrollViewer) -->
+        <Button Grid.Row="1"
+                Content="Зарегистрироваться" 
+                HorizontalAlignment="Right" 
+                Width="150" 
+                Command="{Binding RegisterCommand}" 
+                CommandParameter="{x:Reference PasswordBox}" 
+                Style="{StaticResource CustomButtonStyle}"
+                Margin="0,20,0,20"/>
+        <!-- Отступ сверху и снизу -->
     </Grid>
 </Window>
