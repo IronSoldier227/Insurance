@@ -153,7 +153,6 @@ namespace PL.ViewModels
 
                 await _claimService.CreateClaimAsync(claimDto);
 
-                MessageBox.Show("Заявка на страховой случай успешно отправлена!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
                 CloseWindow(true);
             }
             catch (Exception ex)

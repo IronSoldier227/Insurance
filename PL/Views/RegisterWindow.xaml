@@ -13,7 +13,13 @@
             <RowDefinition Height="*"/>
             <!-- Прокручиваемое содержимое -->
             <RowDefinition Height="Auto"/>
+            <!-- Сообщение об ошибке -->
+            <RowDefinition Height="Auto"/>
             <!-- Кнопка регистрации -->
+            <RowDefinition Height="Auto"/>
+            <!-- Пустое пространство -->
+            <RowDefinition Height="Auto"/>
+            <!-- Ссылка на вход -->
         </Grid.RowDefinitions>
 
         <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
@@ -75,15 +81,42 @@
             </StackPanel>
         </ScrollViewer>
 
-        <!-- Кнопка регистрации (вне ScrollViewer) -->
-        <Button Grid.Row="1"
+        <!-- Сообщение об ошибке -->
+        <TextBlock Grid.Row="1" 
+                   Text="{Binding ErrorMessage}" 
+                   Foreground="Red" 
+                   HorizontalAlignment="Center" 
+                   Margin="0,5,0,5" 
+                   TextWrapping="Wrap" 
+                   Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
+
+        <!-- Кнопка регистрации -->
+        <Button Grid.Row="2"
                 Content="Зарегистрироваться" 
-                HorizontalAlignment="Right" 
+                HorizontalAlignment="Center" 
                 Width="150" 
                 Command="{Binding RegisterCommand}" 
                 CommandParameter="{x:Reference PasswordBox}" 
                 Style="{StaticResource CustomButtonStyle}"
-                Margin="0,20,0,20"/>
-        <!-- Отступ сверху и снизу -->
+                Margin="0,15,0,5"/>
+
+        <!-- Пустое пространство -->
+        <TextBlock Grid.Row="3" 
+                   Text="" 
+                   Margin="0,0,0,10"/>
+
+        <!-- Ссылка на вход -->
+        <TextBlock Grid.Row="4" 
+                   Text="Уже есть аккаунт? Войти" 
+                   Foreground="{StaticResource PrimaryBrush}" 
+                   TextDecorations="Underline" 
+                   HorizontalAlignment="Center" 
+                   Margin="0,0,0,20" 
+                   Cursor="Hand">
+            <TextBlock.InputBindings>
+                <MouseBinding MouseAction="LeftClick" Command="{Binding NavigateToLoginCommand}"/>
+                <!-- Предполагаем, что команда есть в ViewModel -->
+            </TextBlock.InputBindings>
+        </TextBlock>
     </Grid>
 </Window>

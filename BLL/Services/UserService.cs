@@ -43,7 +43,7 @@ namespace BLL.Services
             var existing = await _userReadRepository.GetByLoginAsync(dto.Login);
             if (existing != null)
             {
-                throw new System.InvalidOperationException("Login already exists");
+                throw new System.InvalidOperationException("ѕользователь с данным логином уже существует");
             }
 
             var passwordHashString = ComputeHash(dto.Password);

@@ -29,7 +29,6 @@ namespace PL.ViewModels
             LoadVehiclesCommand = new RelayCommand(async _ => await LoadVehiclesAsync(), (Func<bool>?)null);
             AddVehicleCommand = new RelayCommand(_ => AddVehicle(), (Func<bool>?)null);
             EditVehicleCommand = new RelayCommand(async _ => await EditVehicleAsync(), (Func<bool>?)null);
-            DeleteVehicleCommand = new RelayCommand(async _ => await DeleteVehicleAsync(), (Func<bool>?)null);
             InsureVehicleCommand = new RelayCommand(async _ => await InsureVehicleAsync(), (Func<bool>?)null);
         }
 
@@ -137,8 +136,6 @@ namespace PL.ViewModels
             catch (Exception ex)
             {
                 ErrorMessage = $"Ошибка: {ex.Message}";
-                MessageBox.Show($"Не удалось открыть окно: {ex.Message}", "Ошибка",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -182,38 +179,9 @@ namespace PL.ViewModels
             catch (Exception ex)
             {
                 ErrorMessage = $"Ошибка: {ex.Message}";
-                MessageBox.Show($"Не удалось открыть окно: {ex.Message}", "Ошибка",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        private async Task DeleteVehicleAsync()
-        {
-            if (SelectedVehicle == null)
-            {
-                ErrorMessage = "Выберите автомобиль для удаления";
-                return;
-            }
-
-            var result = MessageBox.Show(
-                $"Вы уверены, что хотите удалить автомобиль {SelectedVehicle.PlateNum}?",
-                "Подтверждение удаления",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Question);
-
-            if (result == MessageBoxResult.Yes)
-            {
-                try
-                {
-                    await _vehicleService.DeleteVehicleAsync(SelectedVehicle.Id);
-                    await LoadVehiclesAsync();
-                }
-                catch (Exception ex)
-                {
-                    ErrorMessage = $"Ошибка удаления: {ex.Message}";
-                }
-            }
-        }
         private async Task InsureVehicleAsync()
         {
 
@@ -257,8 +225,6 @@ namespace PL.ViewModels
             catch (Exception ex)
             {
                 ErrorMessage = $"Ошибка при оформлении страховки: {ex.Message}";
-                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

@@ -478,8 +478,6 @@ namespace PL.ViewModels
             catch (Exception ex)
             {
                 ErrorMessage = $"Ошибка создания полиса: {ex.Message}";
-                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

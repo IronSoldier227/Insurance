@@ -1,11 +1,12 @@
+using Interfaces.DTO;
+using Interfaces.Services;
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Windows.Input;
-using Interfaces.Services;
-using Interfaces.DTO;
 using System.Threading.Tasks;
 using System.Windows.Controls; 
-using System;
+using System.Windows.Input;
+using System.Windows.Navigation;
 
 namespace PL.ViewModels
 {
@@ -25,6 +26,8 @@ namespace PL.ViewModels
             _currentUserService = currentUserService;
             _NavigationWindowService = NavigationWindowService;
             RegisterCommand = new RelayCommand(async param => await RegisterAsync(param as PasswordBox), _ => CanRegister());
+            NavigateToLoginCommand = new RelayCommand(_ => _NavigationWindowService.NavigateTo<LoginWindow>(), (Func<bool>?)null);
+
         }
 
         private bool _isClientType = true; 
@@ -50,6 +53,8 @@ namespace PL.ViewModels
         public int DrivingExperience { get; set; } = 0; 
 
         public ICommand RegisterCommand { get; }
+        public ICommand NavigateToLoginCommand { get; } 
+
 
         public string ErrorMessage
         {

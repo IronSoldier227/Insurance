@@ -2,19 +2,25 @@
 <Window x:Class="PL.LoginWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Вход в систему" Height="419" Width="400"
+        Title="Вход в систему" Height="420" Width="400"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
         Style="{StaticResource CustomWindowStyle}">
 
     <Grid Margin="30">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/> <!-- Заголовок -->
-            <RowDefinition Height="Auto"/> <!-- Панель ввода -->
-            <RowDefinition Height="Auto"/> <!-- Кнопка входа -->
-            <RowDefinition Height="Auto"/> <!-- Сообщение об ошибке -->
-            <RowDefinition Height="*"/>    <!-- Пустое пространство -->
-            <RowDefinition Height="Auto"/> <!-- Кнопка регистрации -->
+            <RowDefinition Height="Auto"/>
+            <!-- Заголовок -->
+            <RowDefinition Height="Auto"/>
+            <!-- Панель ввода -->
+            <RowDefinition Height="Auto"/>
+            <!-- Кнопка входа -->
+            <RowDefinition Height="Auto"/>
+            <!-- Сообщение об ошибке -->
+            <RowDefinition Height="Auto"/>
+            <!-- Пустое пространство -->
+            <RowDefinition Height="Auto"/>
+            <!-- Ссылка на регистрацию -->
         </Grid.RowDefinitions>
 
         <!-- Заголовок -->
@@ -63,12 +69,22 @@
                    TextWrapping="Wrap" 
                    Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
 
-        <!-- Кнопка регистрации -->
-        <Button Grid.Row="5" 
-                Content="Регистрация" 
-                Command="{Binding NavigateToRegisterCommand}" 
-                Style="{StaticResource CustomButtonStyle}" 
-                Width="100" 
-                HorizontalAlignment="Center"/>
+        <!-- Пустое пространство -->
+        <TextBlock Grid.Row="4" 
+                   Text="" 
+                   Margin="0,0,0,10"/>
+
+        <!-- Ссылка на регистрацию -->
+        <TextBlock Grid.Row="5" 
+                   Text="Нет аккаунта? Зарегистрироваться" 
+                   Foreground="{StaticResource PrimaryBrush}" 
+                   TextDecorations="Underline" 
+                   HorizontalAlignment="Center" 
+                   Margin="0,0,0,0" 
+                   Cursor="Hand">
+            <TextBlock.InputBindings>
+                <MouseBinding MouseAction="LeftClick" Command="{Binding NavigateToRegisterCommand}"/>
+            </TextBlock.InputBindings>
+        </TextBlock>
     </Grid>
 </Window>
