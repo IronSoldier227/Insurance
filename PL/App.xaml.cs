@@ -1,5 +1,4 @@
-﻿// PL/App.xaml.cs
-using BLL.Services;
+﻿using BLL.Services;
 using DAL.Context;
 using DAL.Repositories;
 using Interfaces.Repository;
@@ -28,24 +27,18 @@ namespace PL
 
         private void ConfigureServices(IServiceCollection services)
         {
-            // Получаем connection string из App.config
             var connectionString = ConfigurationManager.ConnectionStrings["defaultDB"].ConnectionString;
 
-            // БД
             services.AddDbContext<InsuranceDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
-            // Репозитории (только для клиента)
             services.AddScoped(typeof(Interfaces.Repository.IRepository<>), typeof(DAL.Repositories.Repository<>));
             services.AddScoped<Interfaces.Repository.IUserRepository, DAL.Repositories.UserRepository>();
             services.AddScoped<Interfaces.Repository.IVehicleRepository, DAL.Repositories.VehicleRepository>();
             services.AddScoped<Interfaces.Repository.IPolicyRepository, DAL.Repositories.PolicyRepository>();
             services.AddScoped<Interfaces.Repository.IClaimRepository, DAL.Repositories.ClaimRepository>();
-
-            // Write repositories
             services.AddScoped<DAL.Repositories.UserWriteRepository>();
 
-            // Сервисы BLL (только для клиента)
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<Interfaces.Services.IUserService, BLL.Services.UserService>();
             services.AddScoped<Interfaces.Services.IAuthService, BLL.Services.AuthService>();
@@ -63,13 +56,10 @@ namespace PL
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddTransient<ApproveClaimsWindow>();
             services.AddTransient<ApproveClaimsViewModel>();
-            services.AddScoped<IReportService, ReportService>(); // <-- Регистрируем IReportService
-            services.AddTransient<AnnualRevenueReportWindow>(); // <-- Регистрируем окно
-            services.AddTransient<AnnualRevenueReportViewModel>(); // <-- Регистрируем ViewModel
+            services.AddScoped<IReportService, ReportService>();
+            services.AddTransient<AnnualRevenueReportWindow>(); 
+            services.AddTransient<AnnualRevenueReportViewModel>(); 
 
-            // Окна - НЕ регистрируем как Transient, т.к. NavigationService сам их создает
-            // services.AddTransient<LoginWindow>(); // <-- УБРАТЬ
-            // services.AddTransient<RegisterWindow>();// <-- УБРАТЬ
             services.AddTransient<MainWindow>();
             services.AddTransient<VehiclesWindow>();
             services.AddTransient<AddEditVehicleWindow>();
@@ -80,7 +70,6 @@ namespace PL
             services.AddTransient<PaymentsWindow>();
             services.AddTransient<ManagerWindow>();
 
-            // ViewModels
             services.AddTransient<MainViewModel>();
             services.AddTransient<ManagerViewModel>();
             services.AddTransient<VehiclesViewModel>(); 
@@ -108,10 +97,8 @@ namespace PL
 
             var navigationService = _serviceProvider.GetRequiredService<INavigationService>();
 
-            // Теперь используем NavigateTo для открытия начального окна
-            navigationService.NavigateTo<LoginWindow>(); // <-- Используем NavigateTo
+            navigationService.NavigateTo<LoginWindow>(); 
 
-            // loginWindow.Show(); <-- Убираем, так как NavigateTo вызывает Show()
         }
     }
 }

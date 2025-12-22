@@ -1,5 +1,4 @@
-﻿// PL/ViewModels/RegisterClaimViewModel.cs
-using Interfaces.DTO;
+﻿using Interfaces.DTO;
 using Interfaces.Services;
 using System;
 using System.Collections.ObjectModel;
@@ -96,7 +95,6 @@ namespace PL.ViewModels
             try
             {
                 var userPolicies = await _policyService.GetByClientIdAsync(user.Id);
-                // Фильтруем только активные полисы
                 var activePolicies = userPolicies.Where(p => p.StatusId == 1).ToList();
 
                 Policies.Clear();
@@ -105,7 +103,6 @@ namespace PL.ViewModels
                     Policies.Add(policy);
                 }
 
-                // Выбираем первый полис по умолчанию
                 if (Policies.Any())
                 {
                     SelectedPolicy = Policies.First();
@@ -147,7 +144,7 @@ namespace PL.ViewModels
                 var claimDto = new Claim
                 {
                     PolicyId = SelectedPolicy.Id,
-                    StatusId = 1, // Отправлен
+                    StatusId = 1, 
                     ClaimDate = ClaimDate,
                     Description = Description,
                     Location = Location,
@@ -176,7 +173,7 @@ namespace PL.ViewModels
             {
                 if (window.DataContext == this)
                 {
-                    window.DialogResult = dialogResult; // <-- Это теперь работает, потому что окно открыто как диалог
+                    window.DialogResult = dialogResult; 
                     window.Close();
                     break;
                 }

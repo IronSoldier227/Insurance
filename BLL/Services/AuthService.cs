@@ -21,9 +21,8 @@ namespace BLL.Services
             var user = await _userRepository.GetByLoginAsync(login);
             if (user == null) return null;
 
-            // Правильное сравнение
-            var inputHash = ComputeHash(password); // string в Base64
-            var storedHash = Encoding.UTF8.GetString(user.PasswordHash); // расшифровываем из БД
+            var inputHash = ComputeHash(password); 
+            var storedHash = Encoding.UTF8.GetString(user.PasswordHash);
 
             if (inputHash != storedHash) return null;
 

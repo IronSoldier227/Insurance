@@ -1,4 +1,3 @@
-// Interfaces/Repository/IVehicleRepository.cs
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Core.Entities;

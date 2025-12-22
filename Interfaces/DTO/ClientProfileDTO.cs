@@ -1,5 +1,4 @@
-﻿// Interfaces/DTO/ClientProfileDto.cs
-namespace Interfaces.DTO
+﻿namespace Interfaces.DTO
 {
     public class ClientProfileDto
     {

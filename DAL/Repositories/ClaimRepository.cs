@@ -20,11 +20,11 @@ namespace DAL.Repositories
         public async Task<IEnumerable<InsuranceClaim>> GetAllWithRelatedDataAsync()
         {
             return await _context.InsuranceClaims
-                .Include(c => c.Policy) // Подгружаем связанный полис
-                    .ThenInclude(p => p.Vehicle) // Подгружаем машину из полиса
-                        .ThenInclude(v => v.Model) // Подгружаем модель машины
-                            .ThenInclude(m => m.Brand) // Подгружаем марку машины
-                .Include(c => c.Status) // Подгружаем связанный статус
+                .Include(c => c.Policy) 
+                    .ThenInclude(p => p.Vehicle) 
+                        .ThenInclude(v => v.Model) 
+                            .ThenInclude(m => m.Brand)
+                .Include(c => c.Status)
                 .ToListAsync();
         }
 

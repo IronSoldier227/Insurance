@@ -1,11 +1,10 @@
-// PL/ViewModels/RegisterViewModel.cs
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using Interfaces.Services;
 using Interfaces.DTO;
 using System.Threading.Tasks;
-using System.Windows.Controls; // Для PasswordBox
+using System.Windows.Controls; 
 using System;
 
 namespace PL.ViewModels
@@ -28,8 +27,7 @@ namespace PL.ViewModels
             RegisterCommand = new RelayCommand(async param => await RegisterAsync(param as PasswordBox), _ => CanRegister());
         }
 
-        // --- Новые свойства для типа пользователя ---
-        private bool _isClientType = true; // По умолчанию "Клиент"
+        private bool _isClientType = true; 
         public bool IsClientType
         {
             get => _isClientType;
@@ -38,19 +36,18 @@ namespace PL.ViewModels
 
         public bool IsManagerType
         {
-            get => !_isClientType; // Противоположно IsClientType
+            get => !_isClientType;
             set { IsClientType = !value; OnPropertyChanged(); }
         }
-        // --- 
 
         public string Login { get; set; } = string.Empty;
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string MiddleName { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;
-        public string Passport { get; set; } = string.Empty; // Оставляем, но используем условно
-        public string DriverLicense { get; set; } = string.Empty; // Оставляем, но используем условно
-        public int DrivingExperience { get; set; } = 0; // Оставляем, но используем условно
+        public string Passport { get; set; } = string.Empty;
+        public string DriverLicense { get; set; } = string.Empty; 
+        public int DrivingExperience { get; set; } = 0; 
 
         public ICommand RegisterCommand { get; }
 
@@ -62,8 +59,6 @@ namespace PL.ViewModels
 
         private bool CanRegister() => !string.IsNullOrEmpty(Login);
 
-        // PL/ViewModels/RegisterViewModel.cs
-        // ...
         public async Task RegisterAsync(PasswordBox? passwordBox)
         {
             System.Diagnostics.Debug.WriteLine("RegisterViewModel.RegisterAsync вызван.");
@@ -99,7 +94,6 @@ namespace PL.ViewModels
                 var id = await _userService.RegisterAsync(dto);
                 System.Diagnostics.Debug.WriteLine($"Регистрация успешна, получен ID: {id}");
 
-                // Аутентифицируем нового пользователя сразу после регистрации
                 var user = await _userService.AuthenticateAsync(Login, passwordBox.Password);
                 System.Diagnostics.Debug.WriteLine($"Результат аутентификации: {(user != null ? "Успешно" : "Неудача")}");
 
@@ -108,20 +102,16 @@ namespace PL.ViewModels
                     _currentUserService.SetCurrentUser(user);
                     System.Diagnostics.Debug.WriteLine("Пользователь установлен как текущий.");
 
-                    // --- Проверяем тип пользователя и перенаправляем ---
                     if (user.IsClient)
                     {
                         System.Diagnostics.Debug.WriteLine("Перенаправление на MainWindow.");
                         _navigationService.NavigateTo<MainWindow>();
                     }
-                    else // Это менеджер
+                    else
                     {
                         System.Diagnostics.Debug.WriteLine("Перенаправление на ManagerWindow.");
                         _navigationService.NavigateTo<ManagerWindow>();
                     }
-                    // --- 
-
-                    // Очищаем пароль
                     passwordBox.Clear();
                     System.Diagnostics.Debug.WriteLine("Пароль очищен.");
                 }
@@ -143,7 +133,6 @@ namespace PL.ViewModels
                 System.Diagnostics.Debug.WriteLine($"Стек вызова: {ex.StackTrace}");
             }
         }
-        // ...
 
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string? name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));

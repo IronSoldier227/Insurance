@@ -14,7 +14,7 @@ namespace Interfaces.Services
         Task<IEnumerable<Insurance>> GetPoliciesByVehicleId(int vehicleId);
         Task<IEnumerable<Insurance>> GetByClientIdAsync(int userId);
         Task<AnnualPolicyRevenueReportDto> GetAnnualRevenueReportAsync(int year);
-        Task<IEnumerable<Insurance>> GetActivePoliciesByVehicleIdAsync(int vehicleId); // <-- Новый метод
+        Task<IEnumerable<Insurance>> GetActivePoliciesByVehicleIdAsync(int vehicleId); 
 
     }
 }

@@ -1,4 +1,3 @@
-// DAL/Repositories/Repository.cs
 using Core.Entities;
 using DAL.Context;
 using Interfaces.Repository;
@@ -52,7 +51,6 @@ namespace DAL.Repositories
             return await _context.SaveChangesAsync();
         }
 
-        // --- Реализация новых методов ---
         public async Task<IEnumerable<T>> GetAllWithIncludesAsync(params Expression<Func<T, object>>[] includes)
         {
             IQueryable<T> query = _dbSet;
@@ -70,8 +68,7 @@ namespace DAL.Repositories
             {
                 query = query.Include(include);
             }
-            return await query.FirstOrDefaultAsync(e => EF.Property<int>(e, "Id") == id); // Предполагаем, что Id - это ключ
+            return await query.FirstOrDefaultAsync(e => EF.Property<int>(e, "Id") == id); 
         }
-        // ---
     }
 }

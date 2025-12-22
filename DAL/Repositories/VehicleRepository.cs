@@ -1,4 +1,3 @@
-// DAL/Repositories/VehicleRepository.cs
 using DAL.Context;
 using Core.Entities;
 using Interfaces.Repository;

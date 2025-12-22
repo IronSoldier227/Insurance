@@ -16,7 +16,7 @@ namespace BLL.Services
 
         public async Task<ClientProfileDto?> GetByUserIdAsync(int userId)
         {
-            var entity = await _clientProfileRepository.GetByIdAsync(userId); // Id клиента = Id пользователя
+            var entity = await _clientProfileRepository.GetByIdAsync(userId); 
             if (entity == null) return null;
 
             return new ClientProfileDto

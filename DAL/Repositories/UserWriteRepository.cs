@@ -1,11 +1,10 @@
-// DAL/Repositories/UserWriteRepository.cs
 using DAL.Context;
 using Core.Entities;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using System;
-using Microsoft.Data.SqlClient; // или System.Data.SqlClient, в зависимости от версии
-using System.Diagnostics; // Добавим для Debug.WriteLine
+using Microsoft.Data.SqlClient;
+using System.Diagnostics;
 
 namespace DAL.Repositories
 {
@@ -45,10 +44,6 @@ namespace DAL.Repositories
                 {
                     Debug.WriteLine($"Номер ошибки SQL: {sqlEx.Number}");
                     Debug.WriteLine($"Сообщение SQL: {sqlEx.Message}");
-                    // 8152: String or binary data would be truncated
-                    // 2601: Cannot insert duplicate key row
-                    // 2627: Violation of PRIMARY KEY constraint
-                    // 547: The INSERT statement conflicted with the FOREIGN KEY constraint
                 }
 
                 // Логируйте также EntityValidationErrors, если они есть
@@ -56,13 +51,9 @@ namespace DAL.Repositories
                 {
                     Debug.WriteLine($"Entity Type: {entry.Entity.GetType().Name}");
                     Debug.WriteLine($"Entity State: {entry.State}");
-                    // Note: GetValidationResult might not be available directly on Entry
-                    // We can check if the entity is valid against its own rules if needed,
-                    // but EF usually shows validation errors in the exception or via State.
-                    // The main issue is likely DB constraint violation, not entity validation.
                 }
 
-                throw; // Перебросить исключение дальше
+                throw; 
             }
             catch (Exception ex)
             {
@@ -74,14 +65,10 @@ namespace DAL.Repositories
             }
         }
 
-        // DAL/Repositories/UserWriteRepository.cs
-        // ...
         public async Task AddManagerAsync(Manager manager)
         {
             try
             {
-                // Убедитесь, что Id = Id пользователя (он уже сгенерирован)
-                // Manager.Id = Id пользователя, и он Identity = Never
                 await _context.Managers.AddAsync(manager);
                 await _context.SaveChangesAsync();
             }
@@ -91,6 +78,5 @@ namespace DAL.Repositories
                 throw;
             }
         }
-        // ...
     }
 }

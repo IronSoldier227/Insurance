@@ -1,5 +1,4 @@
-﻿// BLL/Services/ReportService.cs
-using Core.Entities;
+﻿using Core.Entities;
 using DAL.Context;
 using Interfaces.DTO;
 using Interfaces.Repository;
@@ -33,8 +32,8 @@ namespace BLL.Services
         public async Task<AnnualPolicyRevenueReportDto> GetAnnualRevenueReportAsync(int year)
         {
             var report = await _context.InsurancePolicies
-                .Where(p => p.StartDate.Year == year) // Полис оформлен в году
-                .GroupBy(p => 1) // Группируем всё в одну группу
+                .Where(p => p.StartDate.Year == year) 
+                .GroupBy(p => 1) 
                 .Select(g => new AnnualPolicyRevenueReportDto
                 {
                     Year = year,

@@ -1,5 +1,4 @@
-﻿// BLL/Services/VehicleService.cs
-using Core.Entities;
+﻿using Core.Entities;
 using DAL.Repositories;
 using Interfaces.DTO;
 using Interfaces.Repository;
@@ -22,7 +21,6 @@ namespace BLL.Services
             _policyRepository = policyRepository;
         }
 
-        // VehicleService.cs
         public async Task<IEnumerable<VehicleDto>> GetVehiclesByClientIdAsync(int clientId)
         {
             var vehicles = await _vehicleRepository.GetByClientIdAsync(clientId);
@@ -37,8 +35,8 @@ namespace BLL.Services
                 {
                     Id = vehicle.Id,
                     ModelId = vehicle.ModelId,
-                    Brand = vehicle.Model?.Brand?.Name,      // ✅ Получаем имя марки
-                    Model = vehicle.Model?.Name,            // ✅ Получаем имя модели
+                    Brand = vehicle.Model?.Brand?.Name,     
+                    Model = vehicle.Model?.Name,            
                     ClientId = vehicle.ClientId,
                     Color = vehicle.Color,
                     YearOfProduction = vehicle.YearOfProduction,
@@ -65,8 +63,8 @@ namespace BLL.Services
             {
                 Id = vehicle.Id,
                 ModelId = vehicle.ModelId,
-                Brand = vehicle.Model?.Brand?.Name,      // ✅
-                Model = vehicle.Model?.Name,            // ✅
+                Brand = vehicle.Model?.Brand?.Name,
+                Model = vehicle.Model?.Name,
                 ClientId = vehicle.ClientId,
                 Color = vehicle.Color,
                 YearOfProduction = vehicle.YearOfProduction,
@@ -100,14 +98,12 @@ namespace BLL.Services
             }
             else if (_vehicleRepository is VehicleRepository vehicleRepo)
             {
-                await vehicleRepo.SaveChangesAsync(); // Если есть такой метод
+                await vehicleRepo.SaveChangesAsync(); 
             }
 
             return vehicle.Id;
         }
 
-        // BLL/Services/VehicleService.cs
-        // ...
         public async Task UpdateVehicleAsync(VehicleUpdateDto dto)
         {
             System.Diagnostics.Debug.WriteLine($"VehicleService.UpdateVehicleAsync вызван. DTO Id={dto.Id}, Color='{dto.Color}', PlateNum='{dto.PlateNum}', PowerHp={dto.PowerHp}");
@@ -119,7 +115,6 @@ namespace BLL.Services
             }
             System.Diagnostics.Debug.WriteLine($"VehicleService: Найдено транспортное средство. Id={vehicle.Id}, Color='{vehicle.Color}', PlateNum='{vehicle.PlateNum}', PowerHp={vehicle.PowerHp}");
 
-            // Обновляем только те поля, которые пришли в DTO
             if (!string.IsNullOrEmpty(dto.Color))
             {
                 vehicle.Color = dto.Color;
@@ -130,7 +125,7 @@ namespace BLL.Services
                 vehicle.PlateNum = dto.PlateNum;
                 System.Diagnostics.Debug.WriteLine($"VehicleService: Обновлён гос. номер на '{dto.PlateNum}'");
             }
-            if (dto.PowerHp > 0) // Если мощность передана и положительна
+            if (dto.PowerHp > 0) 
             {
                 vehicle.PowerHp = dto.PowerHp;
                 System.Diagnostics.Debug.WriteLine($"VehicleService: Обновлена мощность на {dto.PowerHp}");
@@ -157,9 +152,8 @@ namespace BLL.Services
             var vehicle = await _vehicleRepository.GetByIdAsync(vehicleId);
             if (vehicle == null) return false;
 
-            // Проверяем, есть ли активная страховка
             var policies = await _policyRepository.GetByClientIdAsync(vehicle.ClientId);
-            return !policies.Any(p => p.VehicleId == vehicleId && p.StatusId == 1); // StatusId = 1 (Active)
+            return !policies.Any(p => p.VehicleId == vehicleId && p.StatusId == 1);
         }
     }
 }

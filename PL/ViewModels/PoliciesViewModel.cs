@@ -1,5 +1,4 @@
-﻿// PL/ViewModels/PoliciesViewModel.cs
-using Interfaces.DTO;
+﻿using Interfaces.DTO;
 using Interfaces.Services;
 using System;
 using System.Collections.ObjectModel;
@@ -26,17 +25,17 @@ namespace PL.ViewModels
         }
 
         public ICommand LoadPoliciesCommand { get; }
-        public ICommand GoBackCommand { get; } // Команда "Назад"
+        public ICommand GoBackCommand { get; } 
 
         private ObservableCollection<Insurance> _policies = new ObservableCollection<Insurance>();
-        private string _selectedStatusFilter = "Все"; // По умолчанию "Все"
+        private string _selectedStatusFilter = "Все"; 
         public string SelectedStatusFilter
         {
             get => _selectedStatusFilter;
             set { _selectedStatusFilter = value; OnPropertyChanged(); UpdateFilteredPolicies(); }
         }
 
-        private string _selectedTypeFilter = "Все"; // По умолчанию "Все"
+        private string _selectedTypeFilter = "Все";
         public string SelectedTypeFilter
         {
             get => _selectedTypeFilter;
@@ -47,9 +46,9 @@ namespace PL.ViewModels
         public ObservableCollection<string> TypeFilters { get; } = new() { "Все", "ОСАГО", "КАСКО", "ДСАГО", "ОСГОП" };
         // --- 
 
-        private ObservableCollection<Insurance> _allPolicies = new ObservableCollection<Insurance>(); // Храним все загруженные полисы
-        private ObservableCollection<Insurance> _filteredPolicies = new ObservableCollection<Insurance>(); // Отфильтрованные и отсортированные
-        public ObservableCollection<Insurance> Policies => _filteredPolicies; // Привязываем DataGrid к этому списку
+        private ObservableCollection<Insurance> _allPolicies = new ObservableCollection<Insurance>();
+        private ObservableCollection<Insurance> _filteredPolicies = new ObservableCollection<Insurance>(); 
+        public ObservableCollection<Insurance> Policies => _filteredPolicies; 
 
         public PoliciesViewModel(
             IPolicyService policyService,
@@ -61,7 +60,6 @@ namespace PL.ViewModels
             _navigationService = navigationService;
 
             LoadPoliciesCommand = new RelayCommand(async _ => await LoadPoliciesAsync(), (Func<bool>?)null);
-            // Используем Func<bool> для CanExecute, чтобы он вызывал _navigationService.CanGoBack
             GoBackCommand = new RelayCommand(_ => _navigationService.GoBack(), () => _navigationService.CanGoBack);
 
             _ = LoadPoliciesAsync();
@@ -87,7 +85,7 @@ namespace PL.ViewModels
                     _allPolicies.Add(policy);
                 }
 
-                UpdateFilteredPolicies(); // Применяем фильтрацию и сортировку
+                UpdateFilteredPolicies(); 
             }
             catch (Exception ex)
             {
@@ -95,29 +93,26 @@ namespace PL.ViewModels
             }
         }
 
-        // --- Метод для обновления отфильтрованного списка ---
         private void UpdateFilteredPolicies()
         {
             _filteredPolicies.Clear();
 
-            var filtered = _allPolicies.AsEnumerable(); // Начинаем с полного списка
+            var filtered = _allPolicies.AsEnumerable(); 
 
             // Фильтр по статусу
             switch (SelectedStatusFilter)
             {
                 case "Активные":
-                    filtered = filtered.Where(p => p.StatusId == 1); // Предположим, 1 = Активен
+                    filtered = filtered.Where(p => p.StatusId == 1);
                     break;
                 case "Завершённые":
-                    filtered = filtered.Where(p => p.StatusId == 2); // Предположим, 2 = Завершён
+                    filtered = filtered.Where(p => p.StatusId == 2); 
                     break;
                 case "Отменённые":
-                    filtered = filtered.Where(p => p.StatusId == 3); // Предположим, 3 = Отменён
+                    filtered = filtered.Where(p => p.StatusId == 3);
                     break;
-                    // "Все" означает, что фильтр не применяется
             }
 
-            // Фильтр по типу
             switch (SelectedTypeFilter)
             {
                 case "ОСАГО":
@@ -132,10 +127,8 @@ namespace PL.ViewModels
                 case "ОСГОП":
                     filtered = filtered.Where(p => p.TypeId == 4);
                     break;
-                    // "Все" означает, что фильтр не применяется
             }
 
-            // Сортировка (например, по дате начала)
             var sorted = filtered.OrderBy(p => p.StartDate);
 
             foreach (var policy in sorted)

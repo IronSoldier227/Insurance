@@ -1,4 +1,3 @@
-// Interfaces/Repository/IRepository.cs
 using Core.Entities;
 using System;
 using System.Collections.Generic;
@@ -16,9 +15,7 @@ namespace Interfaces.Repository
         void Remove(T entity);
         Task<int> SaveChangesAsync();
 
-        // --- Новый метод для получения с включением связей ---
         Task<IEnumerable<T>> GetAllWithIncludesAsync(params Expression<Func<T, object>>[] includes);
         Task<T?> GetByIdWithIncludesAsync(int id, params Expression<Func<T, object>>[] includes);
-        // ---
     }
 }

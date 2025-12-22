@@ -1,5 +1,4 @@
-﻿// PL/Views/PoliciesWindow.xaml.cs
-using System.Windows;
+﻿using System.Windows;
 
 namespace PL
 {
@@ -7,10 +6,7 @@ namespace PL
     {
         public PoliciesWindow()
         {
-            // Не пытаемся получать сервисы здесь.
-            // DataContext будет установлен извне.
             InitializeComponent();
-            // Дополнительная логика, если нужна, после InitializeComponent
         }
     }
 }

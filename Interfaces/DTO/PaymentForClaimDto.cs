@@ -1,5 +1,4 @@
-﻿// Interfaces/DTO/PaymentForClaimDto.cs
-using System;
+﻿using System;
 
 namespace Interfaces.DTO
 {
@@ -8,6 +7,6 @@ namespace Interfaces.DTO
         public int ClaimId { get; set; }
         public double Amount { get; set; }
         public DateTime PaymentDate { get; set; }
-        public int AuthorizedBy { get; set; } // Id менеджера
+        public int AuthorizedBy { get; set; } 
     }
 }

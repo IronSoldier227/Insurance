@@ -14,12 +14,11 @@
                 <MenuItem Header="Выход" Command="{Binding LogoutCommand}"/>
             </MenuItem>
             <MenuItem Header="Отчёты">
-                <MenuItem Header="Общая сумма выплат за год" Click="OnReportsClick"/>
-                <MenuItem Header="Доходы от полисов за год" Click="OnAnnualRevenueReportClick"/>
-                <!-- Новая кнопка -->
+                <MenuItem Header="Общая сумма выплат за год" Command="{Binding NavigateToReportsCommand}"/>
+                <MenuItem Header="Доходы от полисов за год" Command="{Binding NavigateToAnnualRevenueReportCommand}"/>
             </MenuItem>
             <MenuItem Header="Страховые случаи">
-                <MenuItem Header="Рассмотреть случаи" Click="OnApproveClaimsClick"/>
+                <MenuItem Header="Рассмотреть случаи" Command="{Binding NavigateToApproveClaimsCommand}"/>
             </MenuItem>
         </Menu>
 
@@ -44,18 +43,17 @@
                        Width="200" 
                        Height="40" 
                        Margin="0,10"
-                       Click="OnReportsClick"/>
+                       Command="{Binding NavigateToReportsCommand}"/>
                 <Button Content="Рассмотреть случаи" 
                        Width="200" 
                        Height="40" 
                        Margin="0,10"
-                       Click="OnApproveClaimsClick"/>
+                       Command="{Binding NavigateToApproveClaimsCommand}"/>
                 <Button Content="Доходы от полисов" 
                        Width="200" 
                        Height="40" 
                        Margin="0,10"
-                       Click="OnAnnualRevenueReportClick"/>
-                <!-- Новая кнопка -->
+                       Command="{Binding NavigateToAnnualRevenueReportCommand}"/>
             </StackPanel>
         </Grid>
     </DockPanel>

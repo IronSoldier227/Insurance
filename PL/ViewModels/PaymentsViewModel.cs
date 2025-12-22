@@ -1,8 +1,7 @@
-﻿// PL/ViewModels/PaymentsViewModel.cs
-using Core.Entities; // Для PaymentForClaim
-using Interfaces.DTO; // Для Claim, User, Insurance
-using Interfaces.Repository; // Для IRepository
-using Interfaces.Services; // Для ICurrentUserService, INavigationService, IUserService, IClaimService, IPolicyService
+﻿using Core.Entities; 
+using Interfaces.DTO;
+using Interfaces.Repository; 
+using Interfaces.Services; 
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -17,7 +16,7 @@ namespace PL.ViewModels
     {
         private readonly IRepository<PaymentForClaim> _paymentRepository;
         private readonly IClaimService _claimService;
-        private readonly IPolicyService _policyService; // <-- Новый сервис
+        private readonly IPolicyService _policyService; 
         private readonly IUserService _userService;
         private readonly ICurrentUserService _currentUserService;
         private readonly INavigationService _navigationService;
@@ -42,14 +41,14 @@ namespace PL.ViewModels
         public PaymentsViewModel(
             IRepository<PaymentForClaim> paymentRepository,
             IClaimService claimService,
-            IPolicyService policyService, // <-- Внедряем IPolicyService
+            IPolicyService policyService,
             IUserService userService,
             ICurrentUserService currentUserService,
             INavigationService navigationService)
         {
             _paymentRepository = paymentRepository;
             _claimService = claimService;
-            _policyService = policyService; // <-- Сохраняем
+            _policyService = policyService;
             _userService = userService;
             _currentUserService = currentUserService;
             _navigationService = navigationService;
@@ -72,35 +71,27 @@ namespace PL.ViewModels
 
             try
             {
-                // Получаем все заявки пользователя
                 var userClaims = await _claimService.GetByClientIdAsync(user.Id);
-                var claimIds = userClaims.ToDictionary(c => c.Id); // Для быстрого поиска по Id
+                var claimIds = userClaims.ToDictionary(c => c.Id);
 
-                // Получаем все выплаты, связанные с его заявками
                 var allPayments = await _paymentRepository.GetAllAsync();
                 var userPayments = allPayments.Where(p => claimIds.ContainsKey(p.ClaimId)).ToList();
 
-                // Получаем все полисы пользователя, чтобы связать их с заявками
-                var userPolicies = (await _policyService.GetByClientIdAsync(user.Id)).ToDictionary(p => p.Id); // Для быстрого поиска по Id
+                var userPolicies = (await _policyService.GetByClientIdAsync(user.Id)).ToDictionary(p => p.Id); 
 
                 Payments.Clear();
                 foreach (var payment in userPayments)
                 {
-                    // Получаем данные по заявке
                     var claim = claimIds.TryGetValue(payment.ClaimId, out var foundClaim) ? foundClaim : null;
                     string policyNumber = "N/A";
                     DateTime claimDate = DateTime.MinValue;
 
                     if (claim != null)
                     {
-                        claimDate = claim.ClaimDate; // Дата заявки
-
-                        // Получаем номер полиса, связанного с заявкой
+                        claimDate = claim.ClaimDate; 
                         var policy = userPolicies.TryGetValue(claim.PolicyId, out var foundPolicy) ? foundPolicy : null;
                         policyNumber = policy?.PolicyNumber ?? "N/A";
                     }
-
-                    // Получаем ФИО менеджера по AuthorizedBy
                     string managerName = "N/A";
                         var managerUser = await _userService.GetByIdAsync(payment.AuthorizedBy);
                         if (managerUser != null)
@@ -115,10 +106,8 @@ namespace PL.ViewModels
                         Amount = payment.Amount,
                         PaymentDate = payment.PaymentDate,
                         AuthorizedByManagerName = managerName,
-                        // --- Устанавливаем новые поля ---
                         ClaimDate = claimDate,
                         PolicyNumber = policyNumber
-                        // ---
                     });
                 }
             }

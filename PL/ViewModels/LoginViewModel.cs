@@ -1,9 +1,8 @@
-// PL/ViewModels/LoginViewModel.cs
 using Interfaces.Services;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using System.Windows.Controls; // Для PasswordBox
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Diagnostics;
 
@@ -13,8 +12,8 @@ namespace PL.ViewModels
     {
         private readonly IAuthService _authService;
         private readonly ICurrentUserService _currentUserService;
-        private readonly INavigationService _navigationService; // Добавляем
-        private string _errorMessage = string.Empty; // Добавим свойство для ошибки
+        private readonly INavigationService _navigationService;
+        private string _errorMessage = string.Empty;
 
         public LoginViewModel(
         IAuthService authService,
@@ -26,9 +25,6 @@ namespace PL.ViewModels
             _navigationService = navigationService;
 
             LoginCommand = new RelayCommand(async param => await LoginAsync(param as PasswordBox), _ => CanLogin());
-            // Убираем команду NavigateToRegisterCommand, если она больше не нужна как отдельная
-            // NavigateToRegisterCommand = new RelayCommand(_ => NavigateToRegister());
-            // Или оставим, но изменим её логику
             NavigateToRegisterCommand = new RelayCommand(_ => NavigateToRegister(), (Func<bool>?)null);
         }
 
@@ -42,12 +38,10 @@ namespace PL.ViewModels
         }
 
         public ICommand LoginCommand { get; }
-        public ICommand NavigateToRegisterCommand { get; } // Новая команда
+        public ICommand NavigateToRegisterCommand { get; }
 
-        private bool CanLogin() => !string.IsNullOrEmpty(Login); // Пароль проверим при выполнении
+        private bool CanLogin() => !string.IsNullOrEmpty(Login);
 
-        // PL/ViewModels/LoginViewModel.cs
-        // ...
         public async Task LoginAsync(PasswordBox? passwordBox)
         {
             ErrorMessage = string.Empty;
@@ -65,16 +59,14 @@ namespace PL.ViewModels
                 {
                     _currentUserService.SetCurrentUser(user);
 
-                    // --- Проверяем тип пользователя и перенаправляем ---
                     if (user.IsClient)
                     {
                         _navigationService.NavigateTo<MainWindow>();
                     }
-                    else // Это менеджер
+                    else 
                     {
-                        _navigationService.NavigateTo<ManagerWindow>(); // <-- Новое окно
+                        _navigationService.NavigateTo<ManagerWindow>(); 
                     }
-                    // --- 
 
                     passwordBox.Clear();
                 }
@@ -88,18 +80,11 @@ namespace PL.ViewModels
                 ErrorMessage = $"Ошибка аутентификации: {ex.Message}";
             }
         }
-        // ...
-
-        // PL/ViewModels/LoginViewModel.cs
-        // ...
         private void NavigateToRegister()
         {
             Debug.WriteLine("LoginViewModel.NavigateToRegister вызван.");
-            // ИСПОЛЬЗУЕМ NavigateTo, а не ShowDialog
             _navigationService.NavigateTo<RegisterWindow>();
         }
-        // ...
-
 
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string? name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));

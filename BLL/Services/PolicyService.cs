@@ -45,7 +45,6 @@ namespace BLL.Services
                     PowerCoefficient = policyDto.PowerCoefficient,
                     ExperienceCoefficient = policyDto.ExperienceCoefficient,
                     BonusMalusCoefficient = policyDto.BonusMalusCoefficient,
-                    // ⚠️ НЕ ПЕРЕДАВАЙТЕ TotalPrice! Он вычисляется автоматически
                 };
 
                 Console.WriteLine($"Сохранение полиса...");
@@ -68,9 +67,8 @@ namespace BLL.Services
                     if (dbEx.InnerException is SqlException sqlEx)
                     {
                         Console.WriteLine($"SQL Error #{sqlEx.Number}: {sqlEx.Message}");
-
-                        // Добавьте диагностику конкретных ошибок
-                        if (sqlEx.Number == 8152) // String or binary data would be truncated
+                        
+                        if (sqlEx.Number == 8152) 
                         {
                             Console.WriteLine("ОШИБКА: Слишком длинная строка для поля!");
                         }
@@ -100,7 +98,6 @@ namespace BLL.Services
                 PowerCoefficient = p.PowerCoefficient,
                 ExperienceCoefficient = p.ExperienceCoefficient,
                 BonusMalusCoefficient = p.BonusMalusCoefficient,
-                // TotalPrice не нужно передавать, он вычисляется
             });
         }
 
@@ -127,19 +124,17 @@ namespace BLL.Services
 
         public async Task<AnnualPolicyRevenueReportDto> GetAnnualRevenueReportAsync(int year)
         {
-            // Выполняем запрос к БД
             var report = await _context.InsurancePolicies
-                .Where(p => p.StartDate.Year == year) // Полис оформлен в году
-                .GroupBy(p => 1) // Группируем всё в одну группу для агрегации
+                .Where(p => p.StartDate.Year == year) 
+                .GroupBy(p => 1) 
                 .Select(g => new AnnualPolicyRevenueReportDto
                 {
                     Year = year,
-                    TotalPoliciesCount = g.Count(), // Количество полисов
-                    TotalRevenue = g.Sum(p => p.TotalPrice) // Сумма TotalPrice
+                    TotalPoliciesCount = g.Count(), 
+                    TotalRevenue = g.Sum(p => p.TotalPrice) 
                 })
-                .FirstOrDefaultAsync(); // Получаем первую (и единственную) группу или null
+                .FirstOrDefaultAsync(); 
 
-            // Если за год нет полисов, возвращаем DTO с нулями
             return report ?? new AnnualPolicyRevenueReportDto { Year = year, TotalPoliciesCount = 0, TotalRevenue = 0 };
         }
 
@@ -147,7 +142,7 @@ namespace BLL.Services
         {
             var p = await _policyRepository.GetByIdAsync(policyId);
             if (p == null) return;
-            p.StatusId = 4; // assume 3 = cancelled
+            p.StatusId = 4; 
             p.CancelledBy = cancelledByManagerId;
             _policyRepository.Update(p);
         }
@@ -156,22 +151,17 @@ namespace BLL.Services
         {
             const int ACTIVE_STATUS_ID = 1;
 
-            // Вызываем общий репозиторий с указанием связей, которые нужно загрузить
-            // Это позволяет получить TypeName и StatusName через навигационные свойства
             var policies = await _policyRepository.GetAllWithIncludesAsync(
-                p => p.Type,      // Загружаем связь InsurancePolicy -> TypeOfPolicy
-                p => p.Status,    // Загружаем связь InsurancePolicy -> StatusOfPolicy
-                p => p.Vehicle   // Опционально: загружаем Vehicle, если нужно что-то из него
+                p => p.Type,      
+                p => p.Status,    
+                p => p.Vehicle   
             );
 
-            // Фильтруем по VehicleId и StatusId
             var activePoliciesForVehicle = policies.Where(p => p.VehicleId == vehicleId && p.StatusId == ACTIVE_STATUS_ID);
 
-            // Преобразуем в DTO
             var dtos = new List<Insurance>();
             foreach (var policy in activePoliciesForVehicle)
             {
-                // Теперь можно получить TypeName и StatusName через навигационные свойства
                 dtos.Add(new Insurance
                 { 
                     Id = policy.Id,
@@ -209,12 +199,9 @@ namespace BLL.Services
                 PowerCoefficient = p.PowerCoefficient,
                 ExperienceCoefficient = p.ExperienceCoefficient,
                 BonusMalusCoefficient = p.BonusMalusCoefficient,
-                // TotalPrice не нужно передавать, он вычисляется
             });
         }
 
-        // BLL/Services/PolicyService.cs
-        // ...
         public async Task<IEnumerable<Insurance>> GetByClientIdAsync(int clientId)
         {
             var list = await _policyRepository.GetByClientIdAsync(clientId);
@@ -232,22 +219,16 @@ namespace BLL.Services
                 PowerCoefficient = p.PowerCoefficient,
                 ExperienceCoefficient = p.ExperienceCoefficient,
                 BonusMalusCoefficient = p.BonusMalusCoefficient,
-                // TotalPrice вычисляется автоматически
-                // --- Заполняем новые свойства ---
-                TypeName = GetTypeName(p.TypeId), // <-- Нужно реализовать
-                VehiclePlateNum = p.Vehicle.PlateNum, // <-- Убедитесь, что Vehicle загружен
-                VehicleBrand = p.Vehicle.Model.Brand.Name, // <-- Убедитесь, что Brand загружен
-                VehicleModel = p.Vehicle.Model.Name, // <-- Убедитесь, что Model загружен
-                StatusName = GetStatusName(p.StatusId), // <-- Нужно реализовать
-                                                        // ---
+                TypeName = GetTypeName(p.TypeId), 
+                VehiclePlateNum = p.Vehicle.PlateNum, 
+                VehicleBrand = p.Vehicle.Model.Brand.Name, 
+                VehicleModel = p.Vehicle.Model.Name, 
+                StatusName = GetStatusName(p.StatusId), 
             });
         }
 
         private string GetTypeName(int typeId)
         {
-            // Возвращаете имя типа по Id (например, из справочника TypeOfPolicy)
-            // Это можно реализовать через ITypeOfPolicyService, или хранить в памяти словарь
-            // Пока заглушка:
             return typeId switch
             {
                 1 => "ОСАГО",
@@ -260,9 +241,6 @@ namespace BLL.Services
 
         private string GetStatusName(int statusId)
         {
-            // Возвращаете имя статуса по Id (например, из справочника StatusOfPolicy)
-            // Это можно реализовать через IStatusOfPolicyService, или хранить в памяти словарь
-            // Пока заглушка:
             return statusId switch
             {
                 1 => "Активен",
@@ -271,6 +249,5 @@ namespace BLL.Services
                 _ => "Неизвестно"
             };
         }
-        // ...
     }
 }

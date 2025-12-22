@@ -1,5 +1,4 @@
-﻿// PL/ViewModels/CreatePolicyViewModel.cs
-using Interfaces.DTO;
+﻿using Interfaces.DTO;
 using Interfaces.Services;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -22,8 +21,8 @@ namespace PL.ViewModels
         private readonly ICatalogService _catalogService;
         private readonly IClientProfileService _clientProfileService;
         private readonly IClaimService _claimService;
-        private readonly int _vehicleId; // <-- Id автомобиля, передаётся из VehiclesViewModel
-        private VehicleDto? _originalVehicleData; // <-- Сохраняем оригинальные данные автомобиля
+        private readonly int _vehicleId; 
+        private VehicleDto? _originalVehicleData;
 
         private string _errorMessage = string.Empty;
         public string ErrorMessage
@@ -35,42 +34,35 @@ namespace PL.ViewModels
         public ICommand LoadDataCommand { get; }
         public ICommand CreatePolicyCommand { get; }
         public ICommand CancelCommand { get; }
-        // --- НОВАЯ КОМАНДА ---
-        public ICommand GoBackCommand { get; } // <-- Добавим команду "Назад", если нужно
-        // ---
-
-        // --- НОВЫЕ СВОЙСТВА ---
-        private VehicleDto? _vehicle; // <-- Это VehicleDto, а не Vehicle из Core.Entities
-        public VehicleDto? Vehicle // <-- Это свойство для XAML
+        public ICommand GoBackCommand { get; } 
+        private VehicleDto? _vehicle;
+        public VehicleDto? Vehicle 
         {
             get => _vehicle;
             set { _vehicle = value; OnPropertyChanged(); }
         }
 
         private ObservableCollection<string> _availablePolicyTypes = new ObservableCollection<string>();
-        public ObservableCollection<string> AvailablePolicyTypes // <-- Это свойство для XAML
+        public ObservableCollection<string> AvailablePolicyTypes 
         {
             get => _availablePolicyTypes;
             set { _availablePolicyTypes = value; OnPropertyChanged(); }
         }
 
         private string? _selectedPolicyType;
-        public string? SelectedPolicyType // <-- Это свойство для XAML
+        public string? SelectedPolicyType 
         {
             get => _selectedPolicyType;
             set
             {
                 _selectedPolicyType = value;
-                OnPropertyChanged(); // Уведомляем о изменении
-                                     // --- НОВОЕ: Пересчитываем цену при изменении типа ---
+                OnPropertyChanged(); 
                 if (!string.IsNullOrEmpty(value))
                 {
-                    _ = CalculatePriceAsync(); // Вызываем асинхронный метод
+                    _ = CalculatePriceAsync(); 
                 }
-                // ---
             }
         }
-        // ---
 
         private ObservableCollection<string> _allPolicyTypes = new ObservableCollection<string>();
         public ObservableCollection<string> AllPolicyTypes
@@ -127,8 +119,8 @@ namespace PL.ViewModels
             get => _policyDurationMonths;
             set {
                 _policyDurationMonths = value;
-                OnPropertyChanged(); // Уведомляем о изменении
-                _ = CalculatePriceAsync(); // Вызываем асинхронный метод
+                OnPropertyChanged(); 
+                _ = CalculatePriceAsync();
             }
         }
 
@@ -194,16 +186,9 @@ namespace PL.ViewModels
             LoadDataCommand = new RelayCommand(async _ => await LoadDataAsync(), (Func<bool>?)null);
             CreatePolicyCommand = new RelayCommand(async _ => await CreatePolicyAsync(), _ => CanCreatePolicy());
             CancelCommand = new RelayCommand(_ => Cancel(), (Func<bool>?)null);
-            // --- Установим команду GoBack ---
-            // Предположим, что INavigationService доступен через DI или передаётся в конструктор
-            // Но если нет, можно просто закрыть окно
-            GoBackCommand = new RelayCommand(_ => CloseWindow(false), (Func<bool>?)null); // <-- Просто закрывает окно
-            // Или, если у вас есть INavigationService:
-            // var navService = App.ServiceProvider.GetRequiredService<INavigationService>();
-            // GoBackCommand = new RelayCommand(_ => navService.GoBack(), () => navService.CanGoBack);
-            // ---
+            GoBackCommand = new RelayCommand(_ => CloseWindow(false), (Func<bool>?)null); 
 
-            _ = LoadDataAsync(); // Загружаем при создании
+            _ = LoadDataAsync();
         }
 
         private async Task LoadDataAsync()
@@ -211,7 +196,6 @@ namespace PL.ViewModels
             ErrorMessage = string.Empty;
             try
             {
-                // Загружаем данные об автомобиле
                 _originalVehicleData = await _vehicleService.GetVehicleByIdAsync(_vehicleId);
                 if (_originalVehicleData == null)
                 {
@@ -219,31 +203,27 @@ namespace PL.ViewModels
                     return;
                 }
 
-                Vehicle = _originalVehicleData; // <-- Устанавливаем VehicleDto
+                Vehicle = _originalVehicleData; 
 
-                // Загружаем *все* возможные типы полисов из справочника
-                var allTypesList = await _catalogService.GetPolicyTypesAsync(); // <-- Предполагаем, что возвращает IEnumerable<string>
+                var allTypesList = await _catalogService.GetPolicyTypesAsync(); 
                 AllPolicyTypes.Clear();
                 foreach (var type in allTypesList)
                 {
                     AllPolicyTypes.Add(type);
                 }
 
-                // Загружаем *активные* полисы для этого автомобиля
-                var activePolicies = await _policyService.GetActivePoliciesByVehicleIdAsync(_vehicleId); // <-- Нужен метод в IPolicyService
-                var activePolicyTypeNames = activePolicies.Select(p => p.TypeName).ToHashSet(); // <-- TypeName из Insurance DTO
+                var activePolicies = await _policyService.GetActivePoliciesByVehicleIdAsync(_vehicleId); 
+                var activePolicyTypeNames = activePolicies.Select(p => p.TypeName).ToHashSet(); 
 
-                // Определяем доступные типы (все минус активные)
                 AvailablePolicyTypes.Clear();
                 foreach (var type in AllPolicyTypes)
                 {
-                    if (!activePolicyTypeNames.Contains(type)) // <-- Если тип НЕ в списке активных
+                    if (!activePolicyTypeNames.Contains(type)) 
                     {
                         AvailablePolicyTypes.Add(type);
                     }
                 }
 
-                // Выбираем первый доступный тип, если есть
                 if (AvailablePolicyTypes.Any())
                 {
                     SelectedPolicyType = AvailablePolicyTypes.First();
@@ -251,10 +231,8 @@ namespace PL.ViewModels
                 else
                 {
                     ErrorMessage = "Для этого автомобиля уже оформлены все доступные типы полисов.";
-                    // Кнопка "Создать" будет неактивна из-за CanCreatePolicy
                 }
 
-                // Рассчитываем начальную цену (если тип выбран)
                 if (SelectedPolicyType != null)
                 {
                     await CalculatePriceAsync();
@@ -266,7 +244,6 @@ namespace PL.ViewModels
             }
         }
 
-        // ...
         private async Task CalculatePriceAsync()
         {
             try
@@ -290,58 +267,29 @@ namespace PL.ViewModels
                     ExperienceCoefficient = CalculateExperienceCoefficient(0);
                 }
 
-                // --- Получаем предыдущий КБМ или устанавливаем базовый (1.17) для нового клиента ---
-                double previousKBM = 1.17; // <-- БАЗОВЫЙ КБМ = 1.17, как вы сказали
+                double previousKBM = 1.17;
                 bool firstAssuring = true;
                 if (Vehicle != null)
                 {
                     var allPolicies = await _policyService.GetClientPoliciesAsync(Vehicle.ClientId);
                     if (allPolicies.Any())
                     {
-                        // Если у клиента есть *предыдущие* полисы, ищем последний *активный* или *последний по дате окончания*
-                        // Для упрощения, возьмём последний по дате начала (или окончания)
-                        // Предположим, что BonusMalusCoefficient - это КБМ, который был применён к *этому* полису при его создании
-                        // и он не меняется в течение срока действия полиса.
-                        // Тогда для НОВОГО полиса, КБМ зависит от СТРАХОВЫХ СЛУЧАЕВ за ПРЕДЫДУЩИЙ ГОД.
-                        // Но для расчёта КБМ НОВОГО полиса, мы берём КБМ ПОСЛЕДНЕГО *ЗАВЕРШЁННОГО* полиса или БАЗОВЫЙ (1.17), если нет завершённых.
-                        // Это сложная логика.
-                        // Для простоты: если у клиента есть *любые* полисы, берём КБМ ПОСЛЕДНЕГО из НИХ (предполагая, что он был рассчитан корректно).
-                        // Но если это *первый* полис, то КБМ = 1.17.
-                        // Тогда логика: если полисов НЕТ -> 1.17. Если ЕСТЬ -> берём КБМ последнего.
-
-                        // ВАЖНО: Предыдущий КБМ - это КБМ, который был *до* наступления страховых случаев в *предыдущем* году.
-                        // Для *нового* полиса, мы используем КБМ *после* учёта случаев *предыдущего* года.
-                        // Т.е. если у клиента был полис в 2024 году, и за этот год не было случаев, то его КБМ для 2025 года будет ниже.
-                        // Мы не можем рассчитать КБМ "после" прошлого года здесь, потому что не знаем, *сколько* случаев было в прошлом году для ПРЕДЫДУЩЕГО полиса.
-                        // Мы знаем только *текущие* активные полисы и *все* прошлые.
-                        // Для *нового* полиса (первого) -> КБМ = 1.17.
-                        // Для *очередного* полиса -> КБМ = КБМ_предыдущего_полиса_после_учёта_случаев_за_его_период.
-
-                        // ПОКА ЧТО: Просто возьмём КБМ последнего полиса как "предыдущий КБМ" для расчёта нового.
-                        // Это не совсем правильно, но ближе к реальности.
-                        var lastPolicy = allPolicies.OrderByDescending(p => p.EndDate).FirstOrDefault(); // Сортируем по дате окончания
+                        var lastPolicy = allPolicies.OrderByDescending(p => p.EndDate).FirstOrDefault(); 
                         if (lastPolicy != null)
                         {
                             firstAssuring = false;
-                            previousKBM = lastPolicy.BonusMalusCoefficient; // <-- Используем BM последнего завершённого (или активного) полиса
+                            previousKBM = lastPolicy.BonusMalusCoefficient; 
                             System.Diagnostics.Debug.WriteLine($"CalculatePriceAsync: Найден предыдущий КБМ: {previousKBM} из полиса ID: {lastPolicy.Id}");
                         }
                         else
                         {
-                            // Если полисы есть, но ни одного завершённого/последнего не найдено (все активны?), всё равно базовый?
-                            // Нет, если есть активный полис, значит, это не "новый клиент".
-                            // Но если все активны, и ни одного завершённого, то КБМ берётся из *активного* полиса.
-                            // Пусть будет так: если ни одного полиса не найдено по сортировке, используем базовый.
-                            // Но если есть активные, и мы не можем определить "последний завершённый", возьмём последний активный.
-                            // Упрощаем: берём любой последний.
-                            var anyLastPolicy = allPolicies.OrderByDescending(p => p.StartDate).FirstOrDefault(); // Попробуем по дате начала
+                            var anyLastPolicy = allPolicies.OrderByDescending(p => p.StartDate).FirstOrDefault(); 
                             if (anyLastPolicy != null)
                             {
                                 firstAssuring = false;
                                 previousKBM = anyLastPolicy.BonusMalusCoefficient;
                                 System.Diagnostics.Debug.WriteLine($"CalculatePriceAsync: Найден КБМ из активного полиса: {previousKBM} из полиса ID: {anyLastPolicy.Id}");
                             }
-                            // Если всё равно не нашли, оставляем 1.17 (хотя это маловероятно, если allPolicies.Any())
                         }
                     }
                     else
@@ -349,7 +297,6 @@ namespace PL.ViewModels
                         System.Diagnostics.Debug.WriteLine($"CalculatePriceAsync: Полисов для клиента {Vehicle.ClientId} не найдено. Используем базовый КБМ 1.17.");
                     }
                 }
-                // ---
 
                     var claimCountLastYearForNewPolicy = await GetClaimCountLastYear(Vehicle.ClientId);
 
@@ -378,7 +325,6 @@ namespace PL.ViewModels
             }
         }
 
-        // --- Изменяем CalculateBonusMalusCoefficient ---
         private double CalculateBonusMalusCoefficient(int claimCountLastYear, double currentKBM, bool firstAssuring)
         {
             System.Diagnostics.Debug.WriteLine($"CalculateBonusMalusCoefficient вызван. ClaimCount={claimCountLastYear}, CurrentKBM={currentKBM}");
@@ -386,19 +332,15 @@ namespace PL.ViewModels
             if (currentKBM == 1.17 && firstAssuring)
             {
                 System.Diagnostics.Debug.WriteLine($"CalculateBonusMalusCoefficient: Это первый полис (предположительно). Возвращаем базовый 1.17.");
-                return 1.17; // <-- Используем 1.17 для первого полиса
+                return 1.17; 
             }
-            // Используем таблицу КБМ
             var kbmTable = new Dictionary<double, Dictionary<int, double>>
     {
-        // ... (ваша таблица КБМ)
-        // Упрощённый пример (реальность сложнее):
-        // Строки - предыдущий КБМ, Столбцы - кол-во страховых случаев за предыдущий год
         { 3.92, new Dictionary<int, double> { {0, 2.94}, {1, 3.92}, {2, 3.92}, {3, 3.92}, {4, 3.92} } },
         { 2.94, new Dictionary<int, double> { {0, 2.25}, {1, 3.92}, {2, 3.92}, {3, 3.92}, {4, 3.92} } },
         { 2.25, new Dictionary<int, double> { {0, 1.76}, {1, 2.25}, {2, 2.25}, {3, 2.25}, {4, 2.25} } },
         { 1.76, new Dictionary<int, double> { {0, 1.17}, {1, 2.25}, {2, 2.25}, {3, 2.25}, {4, 2.25} } },
-        { 1.17, new Dictionary<int, double> { {0, 1.0}, {1, 1.76}, {2, 2.25}, {3, 2.25}, {4, 2.25} } }, // <-- Вот тут: если предыдущий КБМ был 1.17 и 0 случаев, то новый = 1.0
+        { 1.17, new Dictionary<int, double> { {0, 1.0}, {1, 1.76}, {2, 2.25}, {3, 2.25}, {4, 2.25} } }, 
         { 1.0, new Dictionary<int, double> { {0, 0.91}, {1, 1.76}, {2, 2.25}, {3, 2.25}, {4, 2.25} } },
         { 0.91, new Dictionary<int, double> { {0, 0.83}, {1, 1.17}, {2, 2.25}, {3, 2.25}, {4, 2.25} } },
         { 0.83, new Dictionary<int, double> { {0, 0.78}, {1, 1.0}, {2, 1.76}, {3, 2.25}, {4, 2.25} } },
@@ -411,8 +353,6 @@ namespace PL.ViewModels
         { 0.46, new Dictionary<int, double> { {0, 0.46}, {1, 0.78}, {2, 1.17}, {3, 2.25}, {4, 2.25} } }
     };
 
-            // Найдём ближайшее значение текущего КБМ в таблице
-            // Это нужно, если в DTO/БД КБМ хранится с плавающей точкой, не совпадающей точно с ключом таблицы
             var closestKBM = kbmTable.Keys.OrderBy(k => Math.Abs(k - currentKBM)).FirstOrDefault();
 
             System.Diagnostics.Debug.WriteLine($"CalculateBonusMalusCoefficient: Найден ближайший КБМ в таблице: {closestKBM}");
@@ -423,11 +363,9 @@ namespace PL.ViewModels
                 return newKBM;
             }
 
-            // Если не нашли, возвращаем 1.17 (базовый)
             System.Diagnostics.Debug.WriteLine($"CalculateBonusMalusCoefficient: КБМ для (prev={closestKBM}, claims={claimCountLastYear}) не найден. Возвращаем базовый 1.17.");
             return 1.17;
         }
-        // ...
 
         private double GetBaseRate(string policyType)
         {
@@ -474,7 +412,6 @@ namespace PL.ViewModels
 
         private bool CanCreatePolicy()
         {
-            // Проверяем, что выбран тип из доступных и нет ошибки
             return SelectedPolicyType != null && AvailablePolicyTypes.Contains(SelectedPolicyType) && string.IsNullOrEmpty(ErrorMessage);
         }
 
@@ -494,7 +431,6 @@ namespace PL.ViewModels
                 return;
             }
 
-            // --- ПРОВЕРКА: Убедимся, что выбранный тип всё ещё доступен (защита от гонки) ---
             var activePolicies = await _policyService.GetActivePoliciesByVehicleIdAsync(_vehicleId);
             var activePolicyTypeNames = activePolicies.Select(p => p.TypeName).ToHashSet();
             if (activePolicyTypeNames.Contains(SelectedPolicyType))
@@ -502,7 +438,6 @@ namespace PL.ViewModels
                 ErrorMessage = $"Для автомобиля {Vehicle.PlateNum} уже есть активный полис типа '{SelectedPolicyType}'.";
                 return;
             }
-            // ---
 
             var user = _currentUserService.GetCurrentUser();
             if (user == null)
@@ -514,8 +449,6 @@ namespace PL.ViewModels
             try
             {
                 var policyNumber = GeneratePolicyNumber();
-
-                // Получаем ID типа по имени
                 var allTypesList = await _catalogService.GetPolicyTypesAsync();
                 var selectedType = allTypesList.FirstOrDefault(t => t == SelectedPolicyType);
                 if (selectedType == null)
@@ -527,9 +460,9 @@ namespace PL.ViewModels
 
                 var policyDto = new Insurance
                 {
-                    VehicleId = Vehicle.Id, // <-- Используем Id из VehicleDto
+                    VehicleId = Vehicle.Id,
                     TypeId = typeId,
-                    StatusId = 1, // Активный
+                    StatusId = 1, 
                     PolicyNumber = policyNumber,
                     StartDate = DateTime.Now,
                     EndDate = DateTime.Now.AddMonths(PolicyDurationMonths),

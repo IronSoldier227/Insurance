@@ -25,6 +25,10 @@
                 Command="{Binding GenerateReportCommand}" 
                 CommandParameter="{Binding ElementName=YearTextBox, Path=Text}"
                 Width="150" HorizontalAlignment="Left" Margin="0,0,0,10"/>
+        <Button Grid.Row="1" Content="Назад" 
+        Command="{Binding GoBack}" 
+        CommandParameter="{Binding ElementName=YearTextBox, Path=Text}"
+        Width="67" HorizontalAlignment="Left" Margin="181,0,0,10"/>
 
         <StackPanel Grid.Row="2">
             <TextBlock Text="Общая сумма выплат за указанный год:" FontWeight="Bold" Margin="0,0,0,5"/>

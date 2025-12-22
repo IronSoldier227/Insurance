@@ -32,11 +32,10 @@ namespace DAL.Repositories
                 .Where(p => p.Vehicle.ClientId == clientId).ToListAsync();
         }
 
-        // --- Новая реализация ---
         public async Task<IEnumerable<InsurancePolicy>> GetPoliciesByVehicleIdAsync(int vehicleId)
         {
             return await _context.InsurancePolicies
-                .Where(p => p.VehicleId == vehicleId) // <-- Фильтруем по VehicleId
+                .Where(p => p.VehicleId == vehicleId) 
                 .ToListAsync();
         }
 

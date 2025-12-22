@@ -1,7 +1,6 @@
-// PL/RelayCommand.cs
 using System;
 using System.Windows.Input;
-using System.Diagnostics; // Для Debug.WriteLine
+using System.Diagnostics; 
 
 namespace PL
 {
@@ -64,11 +63,8 @@ namespace PL
             }
             catch (Exception ex)
             {
-                // Логируем исключение
                 Debug.WriteLine($"RelayCommand.ExecuteAsync исключение: {ex.Message}");
                 Debug.WriteLine($"Стек вызова: {ex.StackTrace}");
-                // В реальном приложении можно использовать ILogger
-                // или показать пользователю сообщение об ошибке через ViewModel
             }
 
             if (_canExecutePredicate != null || _canExecuteFunc != null)

@@ -1,5 +1,4 @@
-﻿// PL/ViewModels/VehiclesViewModel.cs
-using Interfaces.DTO;
+﻿using Interfaces.DTO;
 using Interfaces.Services;
 using Microsoft.Extensions.DependencyInjection;
 using PL;
@@ -57,11 +56,11 @@ namespace PL.ViewModels
             set { _errorMessage = value; OnPropertyChanged(); }
         }
 
-        private string _selectedFilterType = "Все"; // По умолчанию "Все"
+        private string _selectedFilterType = "Все"; 
         public string SelectedFilterType
         {
             get => _selectedFilterType;
-            set { _selectedFilterType = value; OnPropertyChanged(); _ = LoadVehiclesAsync(); } // Перезагружаем при изменении
+            set { _selectedFilterType = value; OnPropertyChanged(); _ = LoadVehiclesAsync(); } 
         }
 
         public ObservableCollection<string> FilterTypes { get; } = new() { "Все", "Застрахованные", "Незастрахованные" };
@@ -72,7 +71,7 @@ namespace PL.ViewModels
         public ICommand EditVehicleCommand { get; }
         public ICommand DeleteVehicleCommand { get; }
         public ICommand InsureVehicleCommand { get; }
-        public ICommand GoBackCommand { get; } // Добавим свойство для команды
+        public ICommand GoBackCommand { get; } 
 
         public async Task LoadVehiclesAsync()
         {
@@ -94,9 +93,8 @@ namespace PL.ViewModels
                         break;
                     case "Все":
                     default:
-                        break; // Ничего не фильтруем
+                        break; 
                 }
-                // --- 
 
                 Vehicles.Clear();
                 foreach (var vehicle in filteredVehicles)
@@ -114,34 +112,28 @@ namespace PL.ViewModels
         {
             try
             {
-                // Получаем сервисы
                 var vehicleService = App.ServiceProvider.GetRequiredService<IVehicleService>();
                 var currentUserService = App.ServiceProvider.GetRequiredService<ICurrentUserService>();
                 var catalogService = App.ServiceProvider.GetRequiredService<ICatalogService>();
 
-                // Создаем ViewModel
                 var viewModel = new AddEditVehicleViewModel(
                     vehicleService,
                     currentUserService,
                     catalogService);
 
-                // Создаем окно через конструктор
                 var addWindow = new AddEditVehicleWindow
                 {
                     DataContext = viewModel,
                     Owner = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w is VehiclesWindow)
                 };
 
-                // Устанавливаем владельца
                 if (addWindow.Owner != null)
                 {
                     addWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                 }
 
-                // Показываем окно
                 bool? result = addWindow.ShowDialog();
 
-                // Обновляем список после закрытия
                 if (result == true)
                 {
                     _ = LoadVehiclesAsync();
@@ -165,35 +157,29 @@ namespace PL.ViewModels
 
             try
             {
-                // Получаем сервисы
                 var vehicleService = App.ServiceProvider.GetRequiredService<IVehicleService>();
                 var currentUserService = App.ServiceProvider.GetRequiredService<ICurrentUserService>();
                 var catalogService = App.ServiceProvider.GetRequiredService<ICatalogService>();
 
-                // Создаем ViewModel с параметром
                 var viewModel = new AddEditVehicleViewModel(
                     vehicleService,
                     currentUserService,
                     catalogService,
                     SelectedVehicle);
 
-                // Создаем окно через конструктор
                 var editWindow = new AddEditVehicleWindow
                 {
                     DataContext = viewModel,
                     Owner = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w is VehiclesWindow)
                 };
 
-                // Устанавливаем владельца
                 if (editWindow.Owner != null)
                 {
                     editWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                 }
 
-                // Показываем окно
                 bool? result = editWindow.ShowDialog();
 
-                // Обновляем список после закрытия
                 if (result == true)
                 {
                     await LoadVehiclesAsync();
@@ -234,10 +220,6 @@ namespace PL.ViewModels
                 }
             }
         }
-
-        // PL/ViewModels/VehiclesViewModel.cs - обновляем метод InsureVehicleAsync
-        // PL/ViewModels/VehiclesViewModel.cs
-        // ...
         private async Task InsureVehicleAsync()
         {
 
@@ -250,26 +232,22 @@ namespace PL.ViewModels
 
             try
             {
-                // Получаем сервисы через DI
                 var policyService = App.ServiceProvider.GetRequiredService<IPolicyService>();
                 var vehicleService = App.ServiceProvider.GetRequiredService<IVehicleService>();
                 var currentUserService = App.ServiceProvider.GetRequiredService<ICurrentUserService>();
                 var catalogService = App.ServiceProvider.GetRequiredService<ICatalogService>();
-                // --- Добавляем новые сервисы ---
                 var clientProfileService = App.ServiceProvider.GetRequiredService<IClientProfileService>();
                 var claimService = App.ServiceProvider.GetRequiredService<IClaimService>();
 
-                // Создаем ViewModel с новым конструктором
                 var viewModel = new CreatePolicyViewModel(
                     policyService,
                     vehicleService,
                     currentUserService,
                     catalogService,
-                    clientProfileService, // <-- Передаём
-                    claimService,         // <-- Передаём
-                    SelectedVehicle.Id);  // <-- Последним аргументом
+                    clientProfileService,
+                    claimService,
+                    SelectedVehicle.Id);
 
-                // Создаем окно
                 var insureWindow = new CreatePolicyWindow(viewModel)
                 {
                     Owner = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w is VehiclesWindow)
@@ -280,10 +258,7 @@ namespace PL.ViewModels
                     insureWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                 }
 
-                // Показываем диалог
                 bool? result = insureWindow.ShowDialog();
-
-                // Обновляем список после создания полиса
                 if (result == true)
                 {
                     await LoadVehiclesAsync();
@@ -296,7 +271,6 @@ namespace PL.ViewModels
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        // ...
 
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string? name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));

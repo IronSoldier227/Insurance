@@ -89,15 +89,13 @@ namespace BLL.Services
             if (c == null) return;
             if (payoutAmount.HasValue)
             {
-                c.StatusId = 2; // 2 = approved
+                c.StatusId = 2;
                 c.ProcessedBy = managerId;
                 _claimRepository.Update(c);
-                // Create payment entry
-                // left for later
             }
             else
             {
-                c.StatusId = 3; // 3 = rejected
+                c.StatusId = 3;
                 c.ProcessedBy = managerId;
                 _claimRepository.Update(c);
             }   
@@ -110,9 +108,9 @@ namespace BLL.Services
             {
                 Id = c.Id,
                 PolicyId = c.PolicyId,
-                PolicyNumber = c.Policy?.PolicyNumber ?? "N/A", // Убедитесь, что Policy подгружено
+                PolicyNumber = c.Policy.PolicyNumber,
                 StatusId = c.StatusId,
-                StatusName = GetStatusName(c.StatusId), // Убедитесь, что этот метод есть
+                StatusName = GetStatusName(c.StatusId), 
                 ClaimDate = c.ClaimDate,
                 Description = c.Description,
                 Location = c.Location,

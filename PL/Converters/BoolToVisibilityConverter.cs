@@ -13,7 +13,7 @@ namespace PL.Converters
             {
                 return boolValue ? Visibility.Visible : Visibility.Collapsed;
             }
-            return Visibility.Collapsed; // Значение по умолчанию
+            return Visibility.Collapsed; 
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -22,7 +22,7 @@ namespace PL.Converters
             {
                 return visibility == Visibility.Visible;
             }
-            return false; // Значение по умолчанию
+            return false; 
         }
     }
 }

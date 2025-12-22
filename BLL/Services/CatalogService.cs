@@ -1,5 +1,4 @@
-﻿// BLL/Services/CatalogService.cs
-using Interfaces.Services;
+﻿using Interfaces.Services;
 using Interfaces.Repository;
 using Core.Entities;
 using DAL.Context;
@@ -45,9 +44,7 @@ namespace BLL.Services
 
         public async Task<IEnumerable<string>> GetPolicyTypesAsync()
         {
-            // Получаем все типы из БД
             var types = await _typeOfPolicyRepository.GetAllAsync();
-            // Возвращаем только имена
             return types.Select(t => t.Name).ToList();
         }
 
@@ -58,9 +55,7 @@ namespace BLL.Services
                 throw new ArgumentException("Название типа не может быть пустым.", nameof(typeName));
             }
 
-            // Получаем все типы
             var types = await _typeOfPolicyRepository.GetAllAsync();
-            // Ищем по имени (без учёта регистра)
             var type = types.FirstOrDefault(t => string.Equals(t.Name, typeName, StringComparison.OrdinalIgnoreCase));
 
             if (type == null)

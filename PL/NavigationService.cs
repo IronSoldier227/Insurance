@@ -1,6 +1,4 @@
-﻿// PL/NavigationService.cs
-// ...
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -9,7 +7,7 @@ using System.Windows;
 public interface INavigationService
 {
     bool CanGoBack { get; }
-    void InitializeMainWindow<TWindow>(TWindow window) where TWindow : Window; // Новый метод
+    void InitializeMainWindow<TWindow>(TWindow window) where TWindow : Window; 
     void NavigateTo<TWindow>() where TWindow : Window;
     void ShowDialog<TWindow>() where TWindow : Window;
     void GoBack();
@@ -41,12 +39,9 @@ public class NavigationService : INavigationService, INotifyPropertyChanged
         }
     }
 
-    // Новый метод для инициализации начального окна
     public void InitializeMainWindow<TWindow>(TWindow window) where TWindow : Window
     {
-        // Устанавливаем переданное окно как текущее, не закрывая предыдущее (его нет)
         _currentWindow = window;
-        // Устанавливаем DataContext, если он не установлен
         if (window.DataContext == null)
         {
             var viewModelTypeName = typeof(TWindow).Name.Replace("Window", "ViewModel");
@@ -60,20 +55,13 @@ public class NavigationService : INavigationService, INotifyPropertyChanged
                 window.DataContext = viewModel;
             }
         }
-        // window.Show() должен быть вызван вне NavigationService
     }
 
-    // PL/NavigationService.cs
-    // ...
-    // PL/NavigationService.cs
-    // ...
     private void UpdateCanGoBack()
     {
         CanGoBack = _windowHistory.Count > 0;
     }
 
-    // PL/NavigationService.cs
-    // ...
     public void NavigateTo<TWindow>() where TWindow : Window
     {
         System.Diagnostics.Debug.WriteLine($"NavigationService.NavigateTo<{typeof(TWindow).Name}> вызван.");
@@ -103,7 +91,6 @@ public class NavigationService : INavigationService, INotifyPropertyChanged
             var newWindow = (TWindow)Activator.CreateInstance(typeof(TWindow));
             var viewModel = _serviceProvider.GetRequiredService(viewModelType);
 
-            // --- ИЗМЕНЕНИЕ: Устанавливаем DataContext до Show() ---
             newWindow.DataContext = viewModel;
             System.Diagnostics.Debug.WriteLine($"Установлен DataContext: {viewModel.GetType().Name} для окна {newWindow.GetType().Name}");
 
@@ -111,14 +98,8 @@ public class NavigationService : INavigationService, INotifyPropertyChanged
             _currentWindow = newWindow;
             System.Diagnostics.Debug.WriteLine($"Новое окно {newWindow.GetType().Name} открыто и установлено как текущее.");
         }
-        else
-        {
-            // ... (остальной код)
-        }
         System.Diagnostics.Debug.WriteLine($"--- Конец NavigateTo<{typeof(TWindow).Name}> ---");
     }
-    // ...
-
     public void GoBack()
     {
         Debug.WriteLine("NavigationService.GoBack вызван.");
@@ -135,7 +116,7 @@ public class NavigationService : INavigationService, INotifyPropertyChanged
         Debug.WriteLine($"Текущее окно {_currentWindow?.GetType().Name} закрыто.");
 
         var previousWindowType = _windowHistory.Pop();
-        UpdateCanGoBack(); // <-- Обновляем CanGoBack
+        UpdateCanGoBack(); 
         Debug.WriteLine($"Извлечён тип предыдущего окна: {previousWindowType.Name}");
         Debug.WriteLine($"История окон после извлечения: [{string.Join(", ", _windowHistory.Select(t => t.Name))}]");
 

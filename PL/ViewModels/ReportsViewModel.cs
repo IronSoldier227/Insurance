@@ -1,5 +1,4 @@
-﻿// PL/ViewModels/ReportsViewModel.cs
-using Interfaces.Services; // Для ICurrentUserService, INavigationService, IReportService
+﻿using Interfaces.Services; 
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -10,7 +9,7 @@ namespace PL.ViewModels
 {
     public class ReportsViewModel : INotifyPropertyChanged
     {
-        private readonly IReportService _reportService; // <-- Теперь используем IReportService
+        private readonly IReportService _reportService; 
         private readonly ICurrentUserService _currentUserService;
         private readonly INavigationService _navigationService;
 
@@ -30,15 +29,18 @@ namespace PL.ViewModels
 
         public ICommand GenerateReportCommand { get; }
 
+        private readonly ICommand _goBackCommand;
+
         public ReportsViewModel(
-            IReportService reportService, // <-- Внедряем IReportService
+            IReportService reportService, 
             ICurrentUserService currentUserService,
             INavigationService navigationService)
         {
-            _reportService = reportService; // <-- Сохраняем
+            _reportService = reportService; 
             _currentUserService = currentUserService;
             _navigationService = navigationService;
 
+            _goBackCommand = new RelayCommand(_ => _navigationService.GoBack(), () => _navigationService.CanGoBack);
             GenerateReportCommand = new RelayCommand(async param => await GenerateReportAsync(param as string), _ => true);
         }
 
@@ -55,7 +57,6 @@ namespace PL.ViewModels
 
             try
             {
-                // Вызываем сервис
                 var totalAmount = await _reportService.GetTotalPayoutsForYearAsync(year);
                 TotalAmount = totalAmount.ToString("N2") + " ₽";
             }
@@ -65,6 +66,7 @@ namespace PL.ViewModels
             }
         }
 
+        public ICommand GoBack => _goBackCommand;
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string? name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }

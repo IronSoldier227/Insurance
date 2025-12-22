@@ -14,16 +14,16 @@
                 <MenuItem Header="Выход" Command="{Binding LogoutCommand}"/>
             </MenuItem>
             <MenuItem Header="Автомобили">
-                <MenuItem Header="Мои автомобили" Click="OnMyVehiclesClick"/>
+                <MenuItem Header="Мои автомобили" Command="{Binding NavigateToVehiclesCommand}"/>
             </MenuItem>
             <MenuItem Header="Страховки">
-                <MenuItem Header="Мои страховки" Click="OnMyPoliciesClick"/>
+                <MenuItem Header="Мои страховки" Command="{Binding NavigateToPoliciesCommand}"/>
             </MenuItem>
             <MenuItem Header="Страховые случаи">
-                <MenuItem Header="Мои страховые случаи" Click="OnMyClaimsClick"/>
+                <MenuItem Header="Мои страховые случаи" Command="{Binding NavigateToClaimsCommand}"/>
             </MenuItem>
             <MenuItem Header="Выплаты">
-                <MenuItem Header="Мои выплаты" Click="OnMyPaymentsClick"/>
+                <MenuItem Header="Мои выплаты" Command="{Binding NavigateToPaymentsCommand}"/>
             </MenuItem>
         </Menu>
 
@@ -48,22 +48,22 @@
                        Width="200" 
                        Height="40" 
                        Margin="0,10"
-                       Click="OnMyVehiclesClick"/>
+                       Command="{Binding NavigateToVehiclesCommand}"/>
                 <Button Content="Мои страховки" 
                        Width="200" 
                        Height="40" 
                        Margin="0,10"
-                       Click="OnMyPoliciesClick"/>  
+                       Command="{Binding NavigateToPoliciesCommand}"/>
                 <Button Content="Мои страховые случаи" 
                        Width="200" 
                        Height="40" 
                        Margin="0,10"
-                       Click="OnMyClaimsClick"/>
+                       Command="{Binding NavigateToClaimsCommand}"/>
                 <Button Content="Мои выплаты" 
-       Width="200" 
-       Height="40" 
-       Margin="0,10"
-       Click="OnMyPaymentsClick"/>
+                       Width="200" 
+                       Height="40" 
+                       Margin="0,10"
+                       Command="{Binding NavigateToPaymentsCommand}"/>
             </StackPanel>
         </Grid>
     </DockPanel>

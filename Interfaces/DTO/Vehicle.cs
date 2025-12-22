@@ -18,7 +18,7 @@ namespace Interfaces.DTO
         public string? PlateNum { get; set; }
         public string? Category { get; set; }
         public int PowerHp { get; set; }
-        public bool IsInsured { get; set; } // Добавим флаг застрахованности
+        public bool IsInsured { get; set; } 
     }
 
     public class VehicleCreateDto

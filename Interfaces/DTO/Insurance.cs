@@ -31,11 +31,11 @@ namespace Interfaces.DTO
         public double BonusMalusCoefficient { get; set; }
 
         public double TotalPrice => BasePrice * PowerCoefficient * ExperienceCoefficient * BonusMalusCoefficient;
-        public string TypeName { get; set; } = null!; // Например, "ОСАГО"
-        public string VehiclePlateNum { get; set; } = null!; // Гос. номер автомобиля
-        public string VehicleBrand { get; set; } = null!; // Марка автомобиля
-        public string VehicleModel { get; set; } = null!; // Модель автомобиля
-        public string StatusName { get; set; } = null!; // Например, "Активен"
+        public string TypeName { get; set; } = null!;
+        public string VehiclePlateNum { get; set; } = null!; 
+        public string VehicleBrand { get; set; } = null!;
+        public string VehicleModel { get; set; } = null!;
+        public string StatusName { get; set; } = null!;
 
         public VehicleDto Vehicle { get; set; }
     }

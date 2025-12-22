@@ -61,7 +61,7 @@ namespace PL.ViewModels
             {
                 _selectedBrand = value;
                 OnPropertyChanged();
-                if (!IsEditingMode) // Загружаем модели только при добавлении
+                if (!IsEditingMode) 
                 {
                     _ = LoadModelsAsync();
                 }
@@ -89,7 +89,6 @@ namespace PL.ViewModels
             set { _categories = value; OnPropertyChanged(); }
         }
 
-        // SelectedCategory используется как для добавления, так и для отображения при редактировании
         private string? _selectedCategory;
         public string? SelectedCategory
         {
@@ -139,12 +138,11 @@ namespace PL.ViewModels
             set { _errorMessage = value; OnPropertyChanged(); }
         }
 
-        // Свойства только для чтения для отображения неизменяемых данных при редактировании
         public string BrandName { get; private set; } = string.Empty;
         public string ModelName { get; private set; } = string.Empty;
         public string YearOfProductionText { get; private set; } = string.Empty;
         public string VinText { get; private set; } = string.Empty;
-        public string CategoryText { get; private set; } = string.Empty; // Для отображения при редактировании
+        public string CategoryText { get; private set; } = string.Empty; 
 
         public ICommand SaveCommand { get; }
         public ICommand CancelCommand { get; }
@@ -153,9 +151,9 @@ namespace PL.ViewModels
         {
             try
             {
-                if (!IsEditingMode) // Загружаем только при добавлении
+                if (!IsEditingMode) 
                 {
-                    // Загружаем марки
+                    
                     var brands = await _catalogService.GetAllBrandsAsync();
                     Brands.Clear();
                     foreach (var brand in brands)
@@ -163,7 +161,7 @@ namespace PL.ViewModels
                         Brands.Add(brand);
                     }
 
-                    // Загружаем категории
+                    
                     var categories = await _catalogService.GetCategoriesAsync();
                     Categories.Clear();
                     foreach (var category in categories)
@@ -171,7 +169,7 @@ namespace PL.ViewModels
                         Categories.Add(category);
                     }
                 }
-                else // Режим редактирования
+                else 
                 {
                     await LoadEditingDataAsync();
                 }
@@ -188,20 +186,16 @@ namespace PL.ViewModels
 
             try
             {
-                // Устанавливаем значения для редактируемых полей
-                Color = _editingVehicle.Color ?? "";
-                PlateNum = _editingVehicle.PlateNum ?? "";
-                PowerHp = _editingVehicle.PowerHp.ToString("0"); // Устанавливаем как строку
-
-                // Устанавливаем значения для НЕ редактируемых полей (только для отображения)
-                BrandName = _editingVehicle.Brand ?? "Неизвестно";
-                ModelName = _editingVehicle.Model ?? "Неизвестно";
+                
+                Color = _editingVehicle.Color;
+                PlateNum = _editingVehicle.PlateNum;
+                PowerHp = _editingVehicle.PowerHp.ToString("0"); 
+                BrandName = _editingVehicle.Brand;
+                ModelName = _editingVehicle.Model;
                 YearOfProductionText = _editingVehicle.YearOfProduction.ToString();
-                VinText = _editingVehicle.Vin ?? "Неизвестен";
-                CategoryText = _editingVehicle.Category ?? "Неизвестно";
+                VinText = _editingVehicle.Vin;
+                CategoryText = _editingVehicle.Category;
 
-                // Устанавливаем SelectedCategory для отображения в ComboBox (если он видим)
-                // Это значение будет использоваться при валидации, но НЕ будет отправлено в Update DTO
                 SelectedCategory = _editingVehicle.Category;
             }
             catch (Exception ex)
@@ -231,7 +225,6 @@ namespace PL.ViewModels
 
         private bool CanSave()
         {
-            // Можно улучшить, но базовая проверка
             if (!IsEditingMode)
             {
                 return !string.IsNullOrWhiteSpace(Color) &&
@@ -244,7 +237,6 @@ namespace PL.ViewModels
             }
             else
             {
-                // Только редактируемые поля
                 return !string.IsNullOrWhiteSpace(Color) &&
                        !string.IsNullOrWhiteSpace(PlateNum) &&
                        !string.IsNullOrWhiteSpace(PowerHp);
@@ -257,9 +249,8 @@ namespace PL.ViewModels
             System.Diagnostics.Debug.WriteLine($"AddEditVehicleViewModel.SaveAsync вызван. IsEditingMode: {IsEditingMode}");
             ErrorMessage = string.Empty;
 
-            if (!IsEditingMode) // Режим добавления
+            if (!IsEditingMode) 
             {
-                // Валидация для добавления (включая SelectedCategory)
                 if (SelectedModel == null)
                 {
                     ErrorMessage = "Выберите модель автомобиля";
@@ -328,15 +319,15 @@ namespace PL.ViewModels
                 catch (Exception ex)
                 {
                     ErrorMessage = $"Ошибка сохранения: {ex.Message}";
-                    return; // Важно выйти из метода, если произошла ошибка при добавлении
+                    return;
                 }
             }
-            else // Режим редактирования
+            else 
             {
                 System.Diagnostics.Debug.WriteLine($"Режим редактирования. _editingVehicle.Id: {_editingVehicle?.Id}");
                 System.Diagnostics.Debug.WriteLine($"Режим редактирования. ViewModel Color: '{Color}', PlateNum: '{PlateNum}', PowerHp: '{PowerHp}'");
 
-                // Валидация только для изменяемых полей: Color, PlateNum, PowerHp
+                
                 if (string.IsNullOrWhiteSpace(Color))
                 {
                     ErrorMessage = "Введите цвет автомобиля";
@@ -368,17 +359,14 @@ namespace PL.ViewModels
 
                 try
                 {
-                    // Используем _editingVehicle.Id для обновления
                     var dto = new VehicleUpdateDto
                     {
-                        Id = _editingVehicle.Id, // Важно!
-                                                 // НЕ присваиваем Category!
+                        Id = _editingVehicle.Id, 
                     };
 
-                    // Присваиваем только те поля, которые можно изменить
                     dto.Color = Color;
                     dto.PlateNum = PlateNum.ToUpper();
-                    dto.PowerHp = powerEdit; // <-- Присваиваем мощность
+                    dto.PowerHp = powerEdit; 
 
                     System.Diagnostics.Debug.WriteLine($"VehicleUpdateDto создан: Id={dto.Id}, Color='{dto.Color}', PlateNum='{dto.PlateNum}', PowerHp={dto.PowerHp}");
 
@@ -390,11 +378,10 @@ namespace PL.ViewModels
                     ErrorMessage = $"Ошибка сохранения: {ex.Message}";
                     System.Diagnostics.Debug.WriteLine($"Ошибка в SaveAsync: {ex.Message}");
                     System.Diagnostics.Debug.WriteLine($"Стек вызова: {ex.StackTrace}");
-                    return; // Важно выйти из метода, если произошла ошибка при редактировании
+                    return; 
                 }
             }
 
-            // Если дошли до этого места, значит всё прошло успешно
             System.Diagnostics.Debug.WriteLine("SaveAsync завершён успешно, закрываем окно.");
             CloseWindow(true);
 
@@ -407,7 +394,6 @@ namespace PL.ViewModels
 
         private void CloseWindow(bool dialogResult)
         {
-            // Находим окно, к которому привязана эта ViewModel
             foreach (Window window in Application.Current.Windows)
             {
                 if (window.DataContext == this)

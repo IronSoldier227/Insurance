@@ -1,4 +1,3 @@
-// BLL/Services/UserService.cs
 using Interfaces.Services;
 using Interfaces.DTO;
 using Interfaces.Repository;
@@ -7,7 +6,7 @@ using Core.Entities;
 using System.Security.Cryptography;
 using System.Text;
 using System;
-using System.Diagnostics; // Добавим для Debug.WriteLine
+using System.Diagnostics; 
 
 namespace BLL.Services
 {
@@ -27,7 +26,6 @@ namespace BLL.Services
             var userDto = await _userReadRepository.GetByLoginAsync(login);
             if (userDto == null) return null;
 
-            // For demo: use same hashing approach as AuthService
             var hash = ComputeHash(password);
             var provided = Encoding.UTF8.GetBytes(hash);
             if (userDto.PasswordHash == null) return null;
@@ -40,11 +38,8 @@ namespace BLL.Services
             return userDto;
         }
 
-        // BLL/Services/UserService.cs
-        // ...
         public async Task<int> RegisterAsync(UserCreateDto dto)
         {
-            // Check if login already exists
             var existing = await _userReadRepository.GetByLoginAsync(dto.Login);
             if (existing != null)
             {
@@ -60,17 +55,16 @@ namespace BLL.Services
                 LastName = dto.LastName,
                 MiddleName = dto.MiddleName,
                 PhoneNumber = dto.PhoneNumber,
-                IsClient = dto.IsClient // <-- Устанавливаем тип
+                IsClient = dto.IsClient 
             };
 
             var id = await _userWriteRepository.AddUserAsync(user);
 
             if (dto.IsClient)
             {
-                // Создаём ClientProfile
                 var profile = new ClientProfile
                 {
-                    Id = id, // Id совпадает с Id User
+                    Id = id, 
                     Passport = dto.Passport,
                     DriverLicense = dto.DriverLicense,
                     DrivingExperience = dto.DrivingExperience
@@ -80,27 +74,22 @@ namespace BLL.Services
             }
             else
             {
-                // Создаём Manager
                 var manager = new Manager
                 {
-                    Id = id // Id совпадает с Id User
-                            // Другие поля Manager, если есть, заполняем здесь
-                            // Например, может быть поле Position, но в текущей схеме только Id
+                    Id = id 
                 };
 
-                await _userWriteRepository.AddManagerAsync(manager); // <-- Нужно добавить этот метод
+                await _userWriteRepository.AddManagerAsync(manager); 
             }
 
             return id;
         }
-        // ...
 
         public async Task<UserDto?> GetByIdAsync(int id)
         {
-            var userEntity = await _userReadRepository.GetByIdAsync(id); // Предположим, у вас есть такой метод в IUserRepository
+            var userEntity = await _userReadRepository.GetByIdAsync(id); 
             if (userEntity == null) return null;
 
-            // Маппим в DTO
             return new UserDto
             {
                 Id = userEntity.Id,
@@ -110,7 +99,6 @@ namespace BLL.Services
                 LastName = userEntity.LastName,
                 MiddleName = userEntity.MiddleName,
                 PhoneNumber = userEntity.PhoneNumber
-                // PasswordHash обычно не передаётся в DTO для отображения
             };
         }
 

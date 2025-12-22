@@ -1,4 +1,3 @@
-// Interfaces/Services/ICurrentUserService.cs
 using Interfaces.DTO;
 
 namespace Interfaces.Services
@@ -9,7 +8,7 @@ namespace Interfaces.Services
         bool IsAuthenticated { get; }
 
         void SetCurrentUser(UserDto user);
-        void ClearCurrentUser(); // переименуем для ясности
+        void ClearCurrentUser();
         UserDto? GetCurrentUser();
     }
 }

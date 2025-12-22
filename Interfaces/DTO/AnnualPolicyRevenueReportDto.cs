@@ -1,5 +1,4 @@
-﻿// Interfaces/DTO/AnnualPolicyRevenueReportDto.cs
-using System;
+﻿using System;
 
 namespace Interfaces.DTO
 {
@@ -7,6 +6,6 @@ namespace Interfaces.DTO
     {
         public int Year { get; set; }
         public int TotalPoliciesCount { get; set; }
-        public double TotalRevenue { get; set; } // Общий доход
+        public double TotalRevenue { get; set; }
     }
 }

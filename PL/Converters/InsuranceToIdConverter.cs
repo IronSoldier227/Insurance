@@ -1,5 +1,4 @@
-﻿// PL/Converters/InsuranceToIdConverter.cs
-using System;
+﻿using System;
 using System.Globalization;
 using System.Windows.Data;
 using Interfaces.DTO;

@@ -41,7 +41,7 @@ namespace BLL.Services
         {
             var p = await _policyRepository.GetByIdAsync(policyId);
             if (p == null) return;
-            p.StatusId = 3; // cancelled
+            p.StatusId = 3; 
             p.CancelledBy = managerId;
             _policyRepository.Update(p);
         }
@@ -52,11 +52,10 @@ namespace BLL.Services
             if (c == null) return;
             if (payoutAmount.HasValue)
             {
-                c.StatusId = 2; // approved
+                c.StatusId = 2;
                 c.ProcessedBy = managerId;
                 _claimRepository.Update(c);
 
-                // create payment
                 var payment = new Core.Entities.PaymentForClaim
                 {
                     ClaimId = c.Id,
@@ -70,7 +69,7 @@ namespace BLL.Services
             }
             else
             {
-                c.StatusId = 3; // rejected
+                c.StatusId = 3;
                 c.ProcessedBy = managerId;
                 _claimRepository.Update(c);
             }

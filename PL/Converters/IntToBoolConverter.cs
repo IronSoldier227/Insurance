@@ -1,5 +1,4 @@
-﻿// PL/Converters/IntToBoolConverter.cs
-using System;
+﻿using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
@@ -23,7 +22,7 @@ namespace PL.Converters
             {
                 return paramValue;
             }
-            return 12; // Значение по умолчанию
+            return 12;
         }
     }
 }

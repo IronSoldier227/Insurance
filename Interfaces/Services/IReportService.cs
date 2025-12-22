@@ -1,5 +1,4 @@
-﻿// Interfaces/Services/IReportService.cs
-using Interfaces.DTO;
+﻿using Interfaces.DTO;
 using System.Threading.Tasks;
 
 namespace Interfaces.Services

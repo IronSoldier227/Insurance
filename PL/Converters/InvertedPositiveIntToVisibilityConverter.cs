@@ -1,5 +1,4 @@
-﻿// PL/Converters/InvertedPositiveIntToVisibilityConverter.cs
-using System;
+﻿using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
@@ -14,7 +13,7 @@ namespace PL.Converters
             {
                 return intValue > 0 ? Visibility.Collapsed : Visibility.Visible;
             }
-            return Visibility.Visible; // Значение по умолчанию
+            return Visibility.Visible; 
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

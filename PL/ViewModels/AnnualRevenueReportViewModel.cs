@@ -1,5 +1,4 @@
-﻿// PL/ViewModels/AnnualRevenueReportViewModel.cs
-using Interfaces.DTO;
+﻿using Interfaces.DTO;
 using Interfaces.Services;
 using System;
 using System.ComponentModel;
@@ -14,7 +13,7 @@ namespace PL.ViewModels
         private readonly IReportService _reportService;
         private readonly INavigationService _navigationService;
 
-        private string _yearInput = "2025"; // По умолчанию
+        private string _yearInput = "2025"; 
         public string YearInput
         {
             get => _yearInput;

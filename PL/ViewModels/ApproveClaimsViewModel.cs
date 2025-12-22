@@ -1,5 +1,4 @@
-﻿// PL/ViewModels/ApproveClaimsViewModel.cs
-using Interfaces.DTO;
+﻿using Interfaces.DTO;
 using Interfaces.Services;
 using System;
 using System.Collections.ObjectModel;
@@ -14,7 +13,7 @@ namespace PL.ViewModels
     public class ApproveClaimsViewModel : INotifyPropertyChanged
     {
         private readonly IClaimService _claimService;
-        private readonly IPaymentService _paymentService; // <-- Новый сервис для создания выплат
+        private readonly IPaymentService _paymentService; 
         private readonly ICurrentUserService _currentUserService;
         private readonly INavigationService _navigationService;
 
@@ -37,19 +36,19 @@ namespace PL.ViewModels
 
         public ApproveClaimsViewModel(
             IClaimService claimService,
-            IPaymentService paymentService, // <-- Внедряем IPaymentService
+            IPaymentService paymentService, 
             ICurrentUserService currentUserService,
             INavigationService navigationService)
         {
             _claimService = claimService;
-            _paymentService = paymentService; // <-- Сохраняем
+            _paymentService = paymentService;
             _currentUserService = currentUserService;
             _navigationService = navigationService;
 
             LoadClaimsCommand = new RelayCommand(async _ => await LoadClaimsAsync(), (Func<bool>?)null);
             GoBackCommand = new RelayCommand(_ => _navigationService.GoBack(), () => _navigationService.CanGoBack);
 
-            _ = LoadClaimsAsync(); // Загружаем при создании
+            _ = LoadClaimsAsync(); 
         }
 
         private async Task LoadClaimsAsync()
@@ -64,14 +63,13 @@ namespace PL.ViewModels
 
             try
             {
-                // Получаем все случаи со статусом "Отправлен" (Id = 1)
-                var allClaims = await _claimService.GetAllClaimsAsync(); // Нужен метод, возвращающий ВСЕ
-                var pendingClaims = allClaims.Where(c => c.StatusId == 1).ToList(); // Предположим, 1 = Отправлен
+                var allClaims = await _claimService.GetAllClaimsAsync(); 
+                var pendingClaims = allClaims.Where(c => c.StatusId == 1).ToList(); 
 
                 Claims.Clear();
                 foreach (var claim in pendingClaims)
                 {
-                    Claims.Add(new ClaimWithCommands(claim, this)); // Передаём ViewModel для вызова команд
+                    Claims.Add(new ClaimWithCommands(claim, this)); 
                 }
             }
             catch (Exception ex)
@@ -80,7 +78,6 @@ namespace PL.ViewModels
             }
         }
 
-        // --- Команда для одобрения случая ---
         public async Task ProcessClaimAsync(int claimId, bool approve)
         {
             ErrorMessage = string.Empty;
@@ -93,30 +90,25 @@ namespace PL.ViewModels
 
             try
             {
-                // Обновляем статус случая
-                await _claimService.DecideClaimAsync(claimId, user.Id, approve ? 1.0 : (double?)null); // approve = 2, reject = 3
+                await _claimService.DecideClaimAsync(claimId, user.Id, approve ? 1.0 : (double?)null); 
 
-                // Если одобрено, создаём выплату
                 if (approve)
                 {
-                    // Получаем сумму ущерба из случая
                     var claim = await _claimService.GetClaimByIdAsync(claimId);
                     if (claim != null)
                     {
-                        // Создаём DTO для выплаты
-                        var paymentDto = new PaymentForClaimDto // Убедитесь, что у вас есть такой DTO
+                        var paymentDto = new PaymentForClaimDto 
                         {
                             ClaimId = claimId,
-                            Amount = claim.EstimatedDamage, // Используем оценённый ущерб как сумму выплаты
+                            Amount = claim.EstimatedDamage, 
                             PaymentDate = DateTime.Now,
-                            AuthorizedBy = user.Id // Id менеджера
+                            AuthorizedBy = user.Id 
                         };
 
                         await _paymentService.CreatePaymentAsync(paymentDto);
                     }
                 }
 
-                // Перезагружаем список
                 await LoadClaimsAsync();
             }
             catch (Exception ex)
@@ -124,13 +116,11 @@ namespace PL.ViewModels
                 ErrorMessage = $"Ошибка обработки страхового случая: {ex.Message}";
             }
         }
-        // --- 
 
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string? name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 
-    // --- Класс-обёртка для Claim с командами ---
     public class ClaimWithCommands : INotifyPropertyChanged
     {
         private readonly Claim _originalClaim;
@@ -158,5 +148,4 @@ namespace PL.ViewModels
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string? name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
-    // --- 
 }

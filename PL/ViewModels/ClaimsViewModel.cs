@@ -1,5 +1,4 @@
-﻿// PL/ViewModels/ClaimsViewModel.cs
-using Interfaces.DTO;
+﻿using Interfaces.DTO;
 using Interfaces.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -16,7 +15,7 @@ namespace PL.ViewModels
     public class ClaimsViewModel : INotifyPropertyChanged
     {
         private readonly IClaimService _claimService;
-        private readonly IPolicyService _policyService; // Для получения номера полиса
+        private readonly IPolicyService _policyService; 
         private readonly ICurrentUserService _currentUserService;
         private readonly INavigationService _navigationService;
 
@@ -29,7 +28,7 @@ namespace PL.ViewModels
 
         public ICommand LoadClaimsCommand { get; }
         public ICommand GoBackCommand { get; }
-        public ICommand RegisterNewClaimCommand { get; } // Команда для перехода к регистрации
+        public ICommand RegisterNewClaimCommand { get; } 
 
         private string _selectedClaimStatusFilter = "Все";
         public string SelectedClaimStatusFilter
@@ -46,10 +45,8 @@ namespace PL.ViewModels
         }
 
         public ObservableCollection<string> ClaimStatusFilters { get; } = new() { "Все", "Отправлен", "Одобрено", "Отклонено" };
-        // Для фильтра по полису нужно будет заполнить список полисов
         private ObservableCollection<Insurance> _allPoliciesForFilter = new ObservableCollection<Insurance>();
         public ObservableCollection<Insurance> AllPoliciesForFilter => _allPoliciesForFilter;
-        // --- 
 
         private ObservableCollection<Claim> _allClaims = new ObservableCollection<Claim>();
         private ObservableCollection<Claim> _filteredClaims = new ObservableCollection<Claim>();
@@ -57,42 +54,38 @@ namespace PL.ViewModels
 
         public ClaimsViewModel(
             IClaimService claimService,
-            IPolicyService policyService, // <-- Добавляем
+            IPolicyService policyService, 
             ICurrentUserService currentUserService,
             INavigationService navigationService)
         {
             _claimService = claimService;
-            _policyService = policyService; // <-- Сохраняем
+            _policyService = policyService; 
             _currentUserService = currentUserService;
             _navigationService = navigationService;
 
             LoadClaimsCommand = new RelayCommand(async _ => await LoadClaimsAsync(), (Func<bool>?)null);
             GoBackCommand = new RelayCommand(_ => _navigationService.GoBack(), () => _navigationService.CanGoBack);
-            RegisterNewClaimCommand = new RelayCommand(_ => ShowRegisterClaimWindow(), (Func<bool>?)null); // <-- Переход к регистрации
-
+            RegisterNewClaimCommand = new RelayCommand(_ => ShowRegisterClaimWindow(), (Func<bool>?)null); 
             _ = LoadClaimsAsync();
         }
 
         private void ShowRegisterClaimWindow()
         {
-            var registerClaimWindow = new RegisterClaimWindow(); // Создаём окно
-            var viewModel = App.ServiceProvider.GetRequiredService<RegisterClaimViewModel>(); // Получаем ViewModel
+            var registerClaimWindow = new RegisterClaimWindow(); 
+            var viewModel = App.ServiceProvider.GetRequiredService<RegisterClaimViewModel>(); 
             registerClaimWindow.DataContext = viewModel;
 
-            // Устанавливаем владельца, если нужно
             if (Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w is ClaimsWindow) is Window owner)
             {
                 registerClaimWindow.Owner = owner;
                 registerClaimWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             }
 
-            // Показываем как диалог
             bool? result = registerClaimWindow.ShowDialog();
 
-            // Обновляем список после закрытия
             if (result == true)
             {
-                _ = LoadClaimsAsync(); // Перезагружаем случаи
+                _ = LoadClaimsAsync(); 
             }
         }
 
@@ -108,18 +101,15 @@ namespace PL.ViewModels
 
             try
             {
-                // Загружаем полисы для фильтра
                 var userPolicies = await _policyService.GetByClientIdAsync(user.Id);
                 _allPoliciesForFilter.Clear();
-                _allPoliciesForFilter.Add(new Insurance { Id = -1, PolicyNumber = "Все полисы" }); // Добавляем "Все"
+                _allPoliciesForFilter.Add(new Insurance { Id = -1, PolicyNumber = "Все полисы" }); 
                 foreach (var policy in userPolicies)
                 {
                     _allPoliciesForFilter.Add(policy);
                 }
-                // Устанавливаем "Все" как выбранный фильтр
                 SelectedPolicyFilter = -1;
 
-                // Загружаем случаи
                 var allClaims = await _claimService.GetByClientIdAsync(user.Id);
 
                 _allClaims.Clear();
@@ -148,14 +138,12 @@ namespace PL.ViewModels
             }
         }
 
-        // --- Метод для обновления отфильтрованного списка ---
         private void UpdateFilteredClaims()
         {
             _filteredClaims.Clear();
 
             var filtered = _allClaims.AsEnumerable();
 
-            // Фильтр по статусу
             switch (SelectedClaimStatusFilter)
             {
                 case "Отправлен":
@@ -167,16 +155,13 @@ namespace PL.ViewModels
                 case "Отклонено":
                     filtered = filtered.Where(c => c.StatusId == 3);
                     break; 
-                    // "Все" означает, что фильтр не применяется
             }
 
-            // Фильтр по полису
             if (SelectedPolicyFilter != -1)
             {
                 filtered = filtered.Where(c => c.PolicyId == SelectedPolicyFilter);
             }
 
-            // Сортировка (например, по дате)
             var sorted = filtered.OrderBy(c => c.ClaimDate);
 
             foreach (var claim in sorted)
@@ -187,7 +172,6 @@ namespace PL.ViewModels
 
         private string GetStatusName(int statusId)
         {
-            // Заглушка, аналогично PolicyService
             return statusId switch
             {
                 1 => "Отправлен",
