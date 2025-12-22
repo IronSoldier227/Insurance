@@ -30,7 +30,7 @@ namespace Interfaces.DTO
 
         public double BonusMalusCoefficient { get; set; }
 
-        public double TotalPrice => BasePrice * PowerCoefficient * ExperienceCoefficient * BonusMalusCoefficient;
+        public double TotalPrice { get; set; }
         public string TypeName { get; set; } = null!;
         public string VehiclePlateNum { get; set; } = null!; 
         public string VehicleBrand { get; set; } = null!;

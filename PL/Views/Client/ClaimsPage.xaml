@@ -45,9 +45,8 @@
                  IsReadOnly="True"
                  Style="{StaticResource CustomDataGridStyle}">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
                 <DataGridTextColumn Header="Полис" Binding="{Binding PolicyNumber}" Width="120"/>
-                <DataGridTextColumn Header="Дата" Binding="{Binding ClaimDate, StringFormat=dd.MM.yyyy HH:mm}" Width="120"/>
+                <DataGridTextColumn Header="Дата" Binding="{Binding ClaimDate, StringFormat=dd.MM.yyyy}" Width="120"/>
                 <DataGridTextColumn Header="Статус" Binding="{Binding StatusName}" Width="100"/>
                 <DataGridTextColumn Header="Описание" Binding="{Binding Description}" Width="200"/>
                 <DataGridTextColumn Header="Место" Binding="{Binding Location}" Width="150"/>

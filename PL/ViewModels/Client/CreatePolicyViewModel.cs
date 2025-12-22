@@ -313,14 +313,12 @@ namespace PL.ViewModels
                 };
 
                 FinalPriceForUser = Math.Round(calculatedTotalPrice * durationMultiplier, 2);
-                TotalPrice = Math.Round(calculatedTotalPrice, 2);
 
                 System.Diagnostics.Debug.WriteLine($"CalculatePriceAsync: Base={BasePrice}, PowerCoeff={PowerCoefficient}, ExpCoeff={ExperienceCoefficient}, BM-Coeff={BonusMalusCoefficient}, DurationMult={durationMultiplier}, Final={FinalPriceForUser}");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Ошибка расчета цены: {ex.Message}");
-                TotalPrice = 0.0;
                 FinalPriceForUser = 0.0;
             }
         }
@@ -469,7 +467,8 @@ namespace PL.ViewModels
                     BasePrice = BasePrice,
                     PowerCoefficient = PowerCoefficient,
                     ExperienceCoefficient = ExperienceCoefficient,
-                    BonusMalusCoefficient = BonusMalusCoefficient
+                    BonusMalusCoefficient = BonusMalusCoefficient,
+                    TotalPrice = FinalPriceForUser
                 };
 
                 var policyId = await _policyService.CreatePolicyAsync(policyDto);

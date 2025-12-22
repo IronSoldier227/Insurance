@@ -45,6 +45,7 @@ namespace BLL.Services
                     PowerCoefficient = policyDto.PowerCoefficient,
                     ExperienceCoefficient = policyDto.ExperienceCoefficient,
                     BonusMalusCoefficient = policyDto.BonusMalusCoefficient,
+                    TotalPrice  = policyDto.TotalPrice
                 };
 
                 Console.WriteLine($"Сохранение полиса...");
@@ -98,6 +99,7 @@ namespace BLL.Services
                 PowerCoefficient = p.PowerCoefficient,
                 ExperienceCoefficient = p.ExperienceCoefficient,
                 BonusMalusCoefficient = p.BonusMalusCoefficient,
+                TotalPrice = p.TotalPrice,
             });
         }
 
@@ -118,7 +120,8 @@ namespace BLL.Services
                 BasePrice = p.BasePrice,
                 PowerCoefficient = p.PowerCoefficient,
                 ExperienceCoefficient = p.ExperienceCoefficient,
-                BonusMalusCoefficient = p.BonusMalusCoefficient
+                BonusMalusCoefficient = p.BonusMalusCoefficient,
+                TotalPrice = p.TotalPrice
             };
         }
 
@@ -176,7 +179,8 @@ namespace BLL.Services
                     BasePrice = policy.BasePrice,
                     PowerCoefficient = policy.PowerCoefficient,
                     ExperienceCoefficient = policy.ExperienceCoefficient,
-                    BonusMalusCoefficient = policy.BonusMalusCoefficient
+                    BonusMalusCoefficient = policy.BonusMalusCoefficient,
+                    TotalPrice = policy.TotalPrice
                 });
             }
 
@@ -199,12 +203,34 @@ namespace BLL.Services
                 PowerCoefficient = p.PowerCoefficient,
                 ExperienceCoefficient = p.ExperienceCoefficient,
                 BonusMalusCoefficient = p.BonusMalusCoefficient,
+                TotalPrice = p.TotalPrice,
             });
         }
 
         public async Task<IEnumerable<Insurance>> GetByClientIdAsync(int clientId)
         {
             var list = await _policyRepository.GetByClientIdAsync(clientId);
+            List<InsurancePolicy> expiredPolicies = new List<InsurancePolicy>();
+            foreach(var policy in list)
+            { 
+                if (policy.EndDate < DateTime.Now && policy.StatusId != 3)
+                {
+                    policy.StatusId = 2;
+                    expiredPolicies.Add(policy);
+                }
+            }
+
+            if (expiredPolicies.Any())
+            {
+                foreach(var policy in expiredPolicies)
+                {
+                    _policyRepository.Update(policy);
+                }
+
+            }
+
+            list = await _policyRepository.GetByClientIdAsync(clientId);
+
             return list.Select(p => new Insurance
             {
                 Id = p.Id,
@@ -224,6 +250,7 @@ namespace BLL.Services
                 VehicleBrand = p.Vehicle.Model.Brand.Name, 
                 VehicleModel = p.Vehicle.Model.Name, 
                 StatusName = GetStatusName(p.StatusId), 
+                TotalPrice = p.TotalPrice,
             });
         }
 

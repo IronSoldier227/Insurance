@@ -32,11 +32,11 @@
                  IsReadOnly="True"
                  Style="{StaticResource CustomDataGridStyle}">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Дата заявки" Binding="{Binding ClaimDate, StringFormat=dd.MM.yyyy}" Width="100"/>
+                <DataGridTextColumn Header="Дата заявки" Binding="{Binding ClaimDate, StringFormat=dd.MM.yyyy}" Width="150"/>
                 <DataGridTextColumn Header="Полис" Binding="{Binding PolicyNumber}" Width="120"/>
-                <DataGridTextColumn Header="Сумма" Binding="{Binding Amount, StringFormat={}{0:N2} ₽}" Width="100"/>
-                <DataGridTextColumn Header="Дата выплаты" Binding="{Binding PaymentDate, StringFormat=dd.MM.yyyy HH:mm}" Width="120"/>
-                <DataGridTextColumn Header="Утверждено менеджером" Binding="{Binding AuthorizedByManagerName}" Width="150"/>
+                <DataGridTextColumn Header="Сумма" Binding="{Binding Amount, StringFormat={}{0:N2} ₽}" Width="150"/>
+                <DataGridTextColumn Header="Дата выплаты" Binding="{Binding PaymentDate, StringFormat=dd.MM.yyyy}" Width="150"/>
+                <DataGridTextColumn Header="Утверждено менеджером" Binding="{Binding AuthorizedByManagerName}" Width="200"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

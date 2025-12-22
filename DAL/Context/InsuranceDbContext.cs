@@ -130,9 +130,7 @@ public partial class InsuranceDbContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("startDate");
             entity.Property(e => e.StatusId).HasColumnName("status_id");
-            entity.Property(e => e.TotalPrice)
-                .HasComputedColumnSql("((([basePrice]*[powerCoefficient])*[experienceCoefficient])*[bonusMalusCoefficient])", false)
-                .HasColumnName("totalPrice");
+            entity.Property(e => e.TotalPrice).HasColumnName("totalPrice");
             entity.Property(e => e.TypeId).HasColumnName("type_id");
             entity.Property(e => e.VehicleId).HasColumnName("vehicle_id");
 
