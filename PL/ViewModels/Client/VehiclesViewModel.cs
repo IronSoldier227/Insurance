@@ -18,16 +18,13 @@ namespace PL.ViewModels
         private readonly ICurrentUserService _currentUserService;
         private string _errorMessage = string.Empty;
 
-        private readonly IDialogService _dialogService;
 
         public VehiclesViewModel(
             IVehicleService vehicleService,
-            ICurrentUserService currentUserService,
-            IDialogService dialogService)
+            ICurrentUserService currentUserService)
         {
             _vehicleService = vehicleService;
             _currentUserService = currentUserService;
-            _dialogService = dialogService; 
 
             LoadVehiclesCommand = new RelayCommand(async _ => await LoadVehiclesAsync(), (Func<bool>?)null);
             AddVehicleCommand = new RelayCommand(_ => AddVehicle(), (Func<bool>?)null);

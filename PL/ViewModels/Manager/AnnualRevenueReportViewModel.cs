@@ -11,7 +11,7 @@ namespace PL.ViewModels
     public class AnnualRevenueReportViewModel : INotifyPropertyChanged
     {
         private readonly IReportService _reportService;
-        private readonly INavigationService _navigationService;
+        private readonly INavigationWindowService _NavigationWindowService;
 
         private string _yearInput = "2025"; 
         public string YearInput
@@ -37,13 +37,13 @@ namespace PL.ViewModels
         public ICommand LoadReportCommand { get; }
         public ICommand GoBackCommand { get; }
 
-        public AnnualRevenueReportViewModel(IReportService reportService, INavigationService navigationService)
+        public AnnualRevenueReportViewModel(IReportService reportService, INavigationWindowService NavigationWindowService)
         {
             _reportService = reportService;
-            _navigationService = navigationService;
+            _NavigationWindowService = NavigationWindowService;
 
             LoadReportCommand = new RelayCommand(async _ => await LoadReportAsync(), _ => CanLoadReport());
-            GoBackCommand = new RelayCommand(_ => _navigationService.GoBack(), () => _navigationService.CanGoBack);
+            GoBackCommand = new RelayCommand(_ => _NavigationWindowService.GoBack(), () => _NavigationWindowService.CanGoBack);
         }
 
         private bool CanLoadReport()

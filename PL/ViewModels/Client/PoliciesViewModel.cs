@@ -15,7 +15,7 @@ namespace PL.ViewModels
     {
         private readonly IPolicyService _policyService;
         private readonly ICurrentUserService _currentUserService;
-        private readonly INavigationService _navigationService;
+        private readonly INavigationWindowService _NavigationWindowService;
 
         private string _errorMessage = string.Empty;
         public string ErrorMessage
@@ -53,14 +53,14 @@ namespace PL.ViewModels
         public PoliciesViewModel(
             IPolicyService policyService,
             ICurrentUserService currentUserService,
-            INavigationService navigationService)
+            INavigationWindowService NavigationWindowService)
         {
             _policyService = policyService;
             _currentUserService = currentUserService;
-            _navigationService = navigationService;
+            _NavigationWindowService = NavigationWindowService;
 
             LoadPoliciesCommand = new RelayCommand(async _ => await LoadPoliciesAsync(), (Func<bool>?)null);
-            GoBackCommand = new RelayCommand(_ => _navigationService.GoBack(), () => _navigationService.CanGoBack);
+            GoBackCommand = new RelayCommand(_ => _NavigationWindowService.GoBack(), () => _NavigationWindowService.CanGoBack);
 
             _ = LoadPoliciesAsync();
         }

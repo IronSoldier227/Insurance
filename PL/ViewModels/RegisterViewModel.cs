@@ -13,17 +13,17 @@ namespace PL.ViewModels
     {
         private readonly IUserService _userService;
         private readonly ICurrentUserService _currentUserService;
-        private readonly INavigationService _navigationService;
+        private readonly INavigationWindowService _NavigationWindowService;
         private string _errorMessage = string.Empty;
 
         public RegisterViewModel(
             IUserService userService,
             ICurrentUserService currentUserService,
-            INavigationService navigationService)
+            INavigationWindowService NavigationWindowService)
         {
             _userService = userService;
             _currentUserService = currentUserService;
-            _navigationService = navigationService;
+            _NavigationWindowService = NavigationWindowService;
             RegisterCommand = new RelayCommand(async param => await RegisterAsync(param as PasswordBox), _ => CanRegister());
         }
 
@@ -105,12 +105,12 @@ namespace PL.ViewModels
                     if (user.IsClient)
                     {
                         System.Diagnostics.Debug.WriteLine("Перенаправление на MainWindow.");
-                        _navigationService.NavigateTo<MainWindow>();
+                        _NavigationWindowService.NavigateTo<MainWindow>();
                     }
                     else
                     {
                         System.Diagnostics.Debug.WriteLine("Перенаправление на ManagerWindow.");
-                        _navigationService.NavigateTo<ManagerWindow>();
+                        _NavigationWindowService.NavigateTo<ManagerWindow>();
                     }
                     passwordBox.Clear();
                     System.Diagnostics.Debug.WriteLine("Пароль очищен.");

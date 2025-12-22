@@ -10,12 +10,12 @@ namespace PL
         public LoginWindow()
         {
             InitializeComponent();
-            var navigationService = App.ServiceProvider.GetRequiredService<INavigationService>();
+            var NavigationWindowService = App.ServiceProvider.GetRequiredService<INavigationWindowService>();
             var viewModel = App.ServiceProvider.GetRequiredService<LoginViewModel>();
             this.DataContext = viewModel; 
         }
 
-        public LoginWindow(INavigationService navigationService)
+        public LoginWindow(INavigationWindowService NavigationWindowService)
         {
             InitializeComponent();
             var viewModel = App.ServiceProvider.GetRequiredService<LoginViewModel>();

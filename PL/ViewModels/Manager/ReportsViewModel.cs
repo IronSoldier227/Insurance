@@ -11,7 +11,7 @@ namespace PL.ViewModels
     {
         private readonly IReportService _reportService; 
         private readonly ICurrentUserService _currentUserService;
-        private readonly INavigationService _navigationService;
+        private readonly INavigationWindowService _NavigationWindowService;
 
         private string _totalAmount = "0.00 ₽";
         public string TotalAmount
@@ -34,13 +34,13 @@ namespace PL.ViewModels
         public ReportsViewModel(
             IReportService reportService, 
             ICurrentUserService currentUserService,
-            INavigationService navigationService)
+            INavigationWindowService NavigationWindowService)
         {
             _reportService = reportService; 
             _currentUserService = currentUserService;
-            _navigationService = navigationService;
+            _NavigationWindowService = NavigationWindowService;
 
-            _goBackCommand = new RelayCommand(_ => _navigationService.GoBack(), () => _navigationService.CanGoBack);
+            _goBackCommand = new RelayCommand(_ => _NavigationWindowService.GoBack(), () => _NavigationWindowService.CanGoBack);
             GenerateReportCommand = new RelayCommand(async param => await GenerateReportAsync(param as string), _ => true);
         }
 

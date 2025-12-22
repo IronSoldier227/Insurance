@@ -19,7 +19,7 @@ namespace PL.ViewModels
         private readonly IPolicyService _policyService; 
         private readonly IUserService _userService;
         private readonly ICurrentUserService _currentUserService;
-        private readonly INavigationService _navigationService;
+        private readonly INavigationWindowService _NavigationWindowService;
 
         private string _errorMessage = string.Empty;
         public string ErrorMessage
@@ -44,17 +44,17 @@ namespace PL.ViewModels
             IPolicyService policyService,
             IUserService userService,
             ICurrentUserService currentUserService,
-            INavigationService navigationService)
+            INavigationWindowService NavigationWindowService)
         {
             _paymentRepository = paymentRepository;
             _claimService = claimService;
             _policyService = policyService;
             _userService = userService;
             _currentUserService = currentUserService;
-            _navigationService = navigationService;
+            _NavigationWindowService = NavigationWindowService;
 
             LoadPaymentsCommand = new RelayCommand(async _ => await LoadPaymentsAsync(), (Func<bool>?)null);
-            GoBackCommand = new RelayCommand(_ => _navigationService.GoBack(), () => _navigationService.CanGoBack);
+            GoBackCommand = new RelayCommand(_ => _NavigationWindowService.GoBack(), () => _NavigationWindowService.CanGoBack);
 
             _ = LoadPaymentsAsync();
         }

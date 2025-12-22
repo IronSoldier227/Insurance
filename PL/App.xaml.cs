@@ -49,8 +49,8 @@ namespace PL
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IClientProfileService, ClientProfileService>();
 
-            services.AddSingleton<INavigationService, NavigationService>();
-            services.AddSingleton<IPageNavigationService, PageNavigationService>();
+            services.AddSingleton<INavigationWindowService, NavigationWindowService>();
+            services.AddSingleton<IPageNavigationWindowService, PageNavigationWindowService>();
 
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<IPaymentService, PaymentService>();
@@ -68,7 +68,6 @@ namespace PL
             services.AddTransient<ReportsPage>();
             services.AddTransient<ApproveClaimsPage>();
             services.AddTransient<AnnualRevenueReportPage>();
-            services.AddSingleton<IDialogService, DialogService>();
 
             services.AddTransient<MainViewModel>();
             services.AddTransient<ApproveClaimsViewModel>();
@@ -98,9 +97,9 @@ namespace PL
             var context = scope.ServiceProvider.GetRequiredService<InsuranceDbContext>();
             context.Database.EnsureCreated();
 
-            var navigationService = _serviceProvider.GetRequiredService<INavigationService>();
+            var NavigationWindowService = _serviceProvider.GetRequiredService<INavigationWindowService>();
 
-            navigationService.NavigateTo<LoginWindow>(); 
+            NavigationWindowService.NavigateTo<LoginWindow>(); 
 
         }
     }

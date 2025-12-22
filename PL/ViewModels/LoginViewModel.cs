@@ -12,17 +12,17 @@ namespace PL.ViewModels
     {
         private readonly IAuthService _authService;
         private readonly ICurrentUserService _currentUserService;
-        private readonly INavigationService _navigationService;
+        private readonly INavigationWindowService _NavigationWindowService;
         private string _errorMessage = string.Empty;
 
         public LoginViewModel(
         IAuthService authService,
         ICurrentUserService currentUserService,
-        INavigationService navigationService)
+        INavigationWindowService NavigationWindowService)
         {
             _authService = authService;
             _currentUserService = currentUserService;
-            _navigationService = navigationService;
+            _NavigationWindowService = NavigationWindowService;
 
             LoginCommand = new RelayCommand(async param => await LoginAsync(param as PasswordBox), _ => CanLogin());
             NavigateToRegisterCommand = new RelayCommand(_ => NavigateToRegister(), (Func<bool>?)null);
@@ -61,11 +61,11 @@ namespace PL.ViewModels
 
                     if (user.IsClient)
                     {
-                        _navigationService.NavigateTo<MainWindow>();
+                        _NavigationWindowService.NavigateTo<MainWindow>();
                     }
                     else 
                     {
-                        _navigationService.NavigateTo<ManagerWindow>(); 
+                        _NavigationWindowService.NavigateTo<ManagerWindow>(); 
                     }
 
                     passwordBox.Clear();
@@ -83,7 +83,7 @@ namespace PL.ViewModels
         private void NavigateToRegister()
         {
             Debug.WriteLine("LoginViewModel.NavigateToRegister вызван.");
-            _navigationService.NavigateTo<RegisterWindow>();
+            _NavigationWindowService.NavigateTo<RegisterWindow>();
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

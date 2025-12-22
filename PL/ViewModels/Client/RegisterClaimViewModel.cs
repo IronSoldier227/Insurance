@@ -16,7 +16,7 @@ namespace PL.ViewModels
         private readonly IClaimService _claimService;
         private readonly IPolicyService _policyService;
         private readonly ICurrentUserService _currentUserService;
-        private readonly INavigationService _navigationService;
+        private readonly INavigationWindowService _NavigationWindowService;
 
         private string _errorMessage = string.Empty;
         public string ErrorMessage
@@ -74,12 +74,12 @@ namespace PL.ViewModels
             IClaimService claimService,
             IPolicyService policyService,
             ICurrentUserService currentUserService,
-            INavigationService navigationService)
+            INavigationWindowService NavigationWindowService)
         {
             _claimService = claimService;
             _policyService = policyService;
             _currentUserService = currentUserService;
-            _navigationService = navigationService;
+            _NavigationWindowService = NavigationWindowService;
 
             SubmitClaimCommand = new RelayCommand(async _ => await SubmitClaimAsync(), _ => CanSubmitClaim());
             CancelCommand = new RelayCommand(_ => Cancel(), (Func<bool>?)null);

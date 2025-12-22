@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:PL"
              xmlns:converters="clr-namespace:PL.Converters">
-    <!-- Убедитесь, что пространство имен указано правильно -->
     <Application.Resources>
         <ResourceDictionary>
             <converters:IntToBoolConverter x:Key="IntToBoolConverter"/>

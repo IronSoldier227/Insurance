@@ -6,15 +6,15 @@ namespace PL.ViewModels
     public class ManagerViewModel 
     {
         private readonly ICurrentUserService _currentUserService;
-        private readonly IPageNavigationService _navigationPageService;
-        private readonly INavigationService _navigationWindowService;
+        private readonly IPageNavigationWindowService _navigationPageService;
+        private readonly INavigationWindowService _navigationWindowService;
         private readonly ICommand _logoutCommand;
         private readonly ICommand _goBackCommand;
         private readonly ICommand _navigateToReportsCommand;
         private readonly ICommand _navigateToApproveClaimsCommand;
         private readonly ICommand _navigateToAnnualRevenueReportCommand;
 
-        public ManagerViewModel(ICurrentUserService currentUserService, IPageNavigationService navigationPageService, INavigationService navigationWindowService)
+        public ManagerViewModel(ICurrentUserService currentUserService, IPageNavigationWindowService navigationPageService, INavigationWindowService navigationWindowService)
         {
             _currentUserService = currentUserService;
             _navigationPageService = navigationPageService;

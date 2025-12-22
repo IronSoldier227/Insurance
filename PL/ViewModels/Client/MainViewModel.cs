@@ -6,8 +6,8 @@ namespace PL.ViewModels
     public class MainViewModel
     {
         private readonly ICurrentUserService _currentUserService;
-        private readonly IPageNavigationService _navigationPageService;
-        private readonly INavigationService _navigationWindowService;
+        private readonly IPageNavigationWindowService _navigationPageService;
+        private readonly INavigationWindowService _navigationWindowService;
         private readonly ICommand _goBackCommand;
         private readonly ICommand _logoutCommand;
         private readonly ICommand _navigateToVehiclesCommand;
@@ -15,7 +15,7 @@ namespace PL.ViewModels
         private readonly ICommand _navigateToClaimsCommand;
         private readonly ICommand _navigateToPaymentsCommand;
 
-        public MainViewModel(ICurrentUserService currentUserService, IPageNavigationService navigationPageService, INavigationService navigationWindowService)
+        public MainViewModel(ICurrentUserService currentUserService, IPageNavigationWindowService navigationPageService, INavigationWindowService navigationWindowService)
         {
             _currentUserService = currentUserService;
             _navigationPageService = navigationPageService;

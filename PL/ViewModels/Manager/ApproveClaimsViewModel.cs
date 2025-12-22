@@ -15,7 +15,7 @@ namespace PL.ViewModels
         private readonly IClaimService _claimService;
         private readonly IPaymentService _paymentService; 
         private readonly ICurrentUserService _currentUserService;
-        private readonly INavigationService _navigationService;
+        private readonly INavigationWindowService _NavigationWindowService;
 
         private string _errorMessage = string.Empty;
         public string ErrorMessage
@@ -38,15 +38,15 @@ namespace PL.ViewModels
             IClaimService claimService,
             IPaymentService paymentService, 
             ICurrentUserService currentUserService,
-            INavigationService navigationService)
+            INavigationWindowService NavigationWindowService)
         {
             _claimService = claimService;
             _paymentService = paymentService;
             _currentUserService = currentUserService;
-            _navigationService = navigationService;
+            _NavigationWindowService = NavigationWindowService;
 
             LoadClaimsCommand = new RelayCommand(async _ => await LoadClaimsAsync(), (Func<bool>?)null);
-            GoBackCommand = new RelayCommand(_ => _navigationService.GoBack(), () => _navigationService.CanGoBack);
+            GoBackCommand = new RelayCommand(_ => _NavigationWindowService.GoBack(), () => _NavigationWindowService.CanGoBack);
 
             _ = LoadClaimsAsync(); 
         }

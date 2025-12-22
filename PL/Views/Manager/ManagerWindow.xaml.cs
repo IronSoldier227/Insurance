@@ -8,16 +8,16 @@ namespace PL
     public partial class ManagerWindow : Window
     {
         private readonly ManagerViewModel _viewModel;
-        private readonly IPageNavigationService _navigationService;
+        private readonly IPageNavigationWindowService _NavigationWindowService;
 
         public ManagerWindow()
         {
             InitializeComponent();
 
-            _navigationService = App.ServiceProvider.GetRequiredService<IPageNavigationService>();
+            _NavigationWindowService = App.ServiceProvider.GetRequiredService<IPageNavigationWindowService>();
             _viewModel = App.ServiceProvider.GetRequiredService<ManagerViewModel>();
 
-            _navigationService.InitializeFrame(MainFrame); // <-- Передаём Frame в сервис
+            _NavigationWindowService.InitializeFrame(MainFrame); // <-- Передаём Frame в сервис
 
             this.DataContext = _viewModel;
         }

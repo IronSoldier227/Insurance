@@ -8,16 +8,16 @@ namespace PL
     public partial class MainWindow : Window
     {
         private readonly MainViewModel _viewModel;
-        private readonly IPageNavigationService _navigationService;
+        private readonly IPageNavigationWindowService _NavigationWindowService;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            _navigationService = App.ServiceProvider.GetRequiredService<IPageNavigationService>();
+            _NavigationWindowService = App.ServiceProvider.GetRequiredService<IPageNavigationWindowService>();
             _viewModel = App.ServiceProvider.GetRequiredService<MainViewModel>();
 
-            _navigationService.InitializeFrame(MainFrame); // <-- Передаём Frame в сервис
+            _NavigationWindowService.InitializeFrame(MainFrame); // <-- Передаём Frame в сервис
 
             this.DataContext = _viewModel;
         }

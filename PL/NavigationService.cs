@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 
-public interface INavigationService
+public interface INavigationWindowService
 {
     bool CanGoBack { get; }
     void InitializeMainWindow<TWindow>(TWindow window) where TWindow : Window; 
@@ -15,13 +15,13 @@ public interface INavigationService
     void GoBack();
 }
 
-public class NavigationService : INavigationService, INotifyPropertyChanged
+public class NavigationWindowService : INavigationWindowService, INotifyPropertyChanged
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly Stack<Type> _windowHistory;
     private Window? _currentWindow;
 
-    public NavigationService(IServiceProvider serviceProvider)
+    public NavigationWindowService(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
         _windowHistory = new Stack<Type>();
@@ -66,7 +66,7 @@ public class NavigationService : INavigationService, INotifyPropertyChanged
 
     public void NavigateTo<TWindow>() where TWindow : Window
     {
-        System.Diagnostics.Debug.WriteLine($"NavigationService.NavigateTo<{typeof(TWindow).Name}> вызван.");
+        System.Diagnostics.Debug.WriteLine($"NavigationWindowService.NavigateTo<{typeof(TWindow).Name}> вызван.");
         System.Diagnostics.Debug.WriteLine($"Текущее окно перед закрытием: {_currentWindow?.GetType().Name ?? "null"}");
         System.Diagnostics.Debug.WriteLine($"История окон до добавления: [{string.Join(", ", _windowHistory.Select(t => t.Name))}]");
 
@@ -104,7 +104,7 @@ public class NavigationService : INavigationService, INotifyPropertyChanged
     }
     public void GoBack()
     {
-        Debug.WriteLine("NavigationService.GoBack вызван.");
+        Debug.WriteLine("NavigationWindowService.GoBack вызван.");
         Debug.WriteLine($"CanGoBack: {CanGoBack}");
         Debug.WriteLine($"История окон перед извлечением: [{string.Join(", ", _windowHistory.Select(t => t.Name))}]");
 
@@ -181,14 +181,14 @@ public class NavigationService : INavigationService, INotifyPropertyChanged
     protected void OnPropertyChanged([CallerMemberName] string? name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 }
 
-public interface IPageNavigationService
+public interface IPageNavigationWindowService
 {
     bool CanGoBack { get; }
     void NavigateTo<TPage>() where TPage : Page;
     void GoBack();
     void InitializeFrame(Frame frame); 
 }
-public class PageNavigationService : IPageNavigationService
+public class PageNavigationWindowService : IPageNavigationWindowService
 {
     private Frame? _frame;
 
