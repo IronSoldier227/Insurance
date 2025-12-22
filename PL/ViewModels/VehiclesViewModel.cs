@@ -83,8 +83,6 @@ namespace PL.ViewModels
             try
             {
                 var vehicles = await _vehicleService.GetVehiclesByClientIdAsync(user.Id);
-
-                // --- Применяем фильтр ---
                 IEnumerable<VehicleDto> filteredVehicles = vehicles;
                 switch (SelectedFilterType)
                 {

@@ -1,6 +1,7 @@
 ﻿// PL/ViewModels/CreatePolicyViewModel.cs
 using Interfaces.DTO;
 using Interfaces.Services;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -57,7 +58,17 @@ namespace PL.ViewModels
         public string? SelectedPolicyType // <-- Это свойство для XAML
         {
             get => _selectedPolicyType;
-            set { _selectedPolicyType = value; OnPropertyChanged(); }
+            set
+            {
+                _selectedPolicyType = value;
+                OnPropertyChanged(); // Уведомляем о изменении
+                                     // --- НОВОЕ: Пересчитываем цену при изменении типа ---
+                if (!string.IsNullOrEmpty(value))
+                {
+                    _ = CalculatePriceAsync(); // Вызываем асинхронный метод
+                }
+                // ---
+            }
         }
         // ---
 
@@ -114,7 +125,11 @@ namespace PL.ViewModels
         public int PolicyDurationMonths
         {
             get => _policyDurationMonths;
-            set { _policyDurationMonths = value; OnPropertyChanged(); }
+            set {
+                _policyDurationMonths = value;
+                OnPropertyChanged(); // Уведомляем о изменении
+                _ = CalculatePriceAsync(); // Вызываем асинхронный метод
+            }
         }
 
         private double _basePrice;
@@ -525,15 +540,6 @@ namespace PL.ViewModels
                 };
 
                 var policyId = await _policyService.CreatePolicyAsync(policyDto);
-
-                MessageBox.Show(
-                    $"Страховой полис успешно создан!\n" +
-                    $"Номер полиса: {policyNumber}\n" +
-                    $"Сумма к оплате: {FinalPriceForUser:C}\n" +
-                    $"Срок действия: {policyDto.StartDate:dd.MM.yyyy} - {policyDto.EndDate:dd.MM.yyyy}",
-                    "Успех",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
 
                 CloseWindow(true);
             }

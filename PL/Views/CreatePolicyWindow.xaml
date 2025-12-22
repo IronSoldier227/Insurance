@@ -65,8 +65,6 @@
             <StackPanel Orientation="Horizontal">
                 <RadioButton Content="12 месяцев" IsChecked="{Binding PolicyDurationMonths, Converter={StaticResource IntToBoolConverter}, ConverterParameter=12}" Margin="0,0,10,0"/>
                 <RadioButton Content="6 месяцев" IsChecked="{Binding PolicyDurationMonths, Converter={StaticResource IntToBoolConverter}, ConverterParameter=6}" Margin="0,0,10,0"/>
-                <TextBox Text="{Binding PolicyDurationMonths, UpdateSourceTrigger=PropertyChanged}" Width="60" TextAlignment="Center"/>
-                <TextBlock Text="мес." VerticalAlignment="Center" Margin="5,0,0,0"/>
             </StackPanel>
         </GroupBox>
 
