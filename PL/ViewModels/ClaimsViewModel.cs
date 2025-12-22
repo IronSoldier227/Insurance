@@ -75,12 +75,6 @@ namespace PL.ViewModels
             var viewModel = App.ServiceProvider.GetRequiredService<RegisterClaimViewModel>(); 
             registerClaimWindow.DataContext = viewModel;
 
-            if (Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w is ClaimsWindow) is Window owner)
-            {
-                registerClaimWindow.Owner = owner;
-                registerClaimWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            }
-
             bool? result = registerClaimWindow.ShowDialog();
 
             if (result == true)

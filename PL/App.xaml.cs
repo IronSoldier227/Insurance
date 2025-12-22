@@ -50,31 +50,34 @@ namespace PL
             services.AddScoped<IClientProfileService, ClientProfileService>();
 
             services.AddSingleton<INavigationService, NavigationService>();
+            services.AddSingleton<IPageNavigationService, PageNavigationService>();
+
             services.AddScoped<IReportService, ReportService>();
-            services.AddTransient<ReportsWindow>();
-            services.AddTransient<ReportsViewModel>();
             services.AddScoped<IPaymentService, PaymentService>();
-            services.AddTransient<ApproveClaimsWindow>();
-            services.AddTransient<ApproveClaimsViewModel>();
             services.AddScoped<IReportService, ReportService>();
-            services.AddTransient<AnnualRevenueReportWindow>(); 
-            services.AddTransient<AnnualRevenueReportViewModel>(); 
 
             services.AddTransient<MainWindow>();
-            services.AddTransient<VehiclesWindow>();
+            services.AddTransient<VehiclesPage>();
             services.AddTransient<AddEditVehicleWindow>();
             services.AddTransient<CreatePolicyWindow>();
-            services.AddTransient<PoliciesWindow>();
-            services.AddTransient<ClaimsWindow>();
+            services.AddTransient<PoliciesPage>();
+            services.AddTransient<ClaimsPage>();
             services.AddTransient<RegisterClaimWindow>();
-            services.AddTransient<PaymentsWindow>();
+            services.AddTransient<PaymentsPage>();
             services.AddTransient<ManagerWindow>();
+            services.AddTransient<ReportsPage>();
+            services.AddTransient<ApproveClaimsPage>();
+            services.AddTransient<AnnualRevenueReportPage>();
+            services.AddSingleton<IDialogService, DialogService>();
 
             services.AddTransient<MainViewModel>();
+            services.AddTransient<ApproveClaimsViewModel>();
+            services.AddTransient<AnnualRevenueReportViewModel>(); 
             services.AddTransient<ManagerViewModel>();
             services.AddTransient<VehiclesViewModel>(); 
             services.AddTransient<LoginViewModel>();
             services.AddTransient<RegisterViewModel>();
+            services.AddTransient<ReportsViewModel>();
             services.AddTransient<MainViewModel>();
             services.AddTransient<PoliciesViewModel>();
             services.AddTransient<ClaimsViewModel>();

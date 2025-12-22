@@ -1,0 +1,51 @@
+﻿<Page x:Class="PL.VehiclesPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:PL"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="Мои автомобили">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Для кнопок -->
+            <RowDefinition Height="Auto"/>
+            <!-- Для ошибки -->
+            <RowDefinition Height="*"/>
+            <!-- Для DataGrid -->
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,10,10,5">
+            <Button Content="Обновить" Command="{Binding LoadVehiclesCommand}" Style="{StaticResource CustomButtonStyle}" Margin="0,0,10,0"/>
+            <Button Content="Добавить" Command="{Binding AddVehicleCommand}" Style="{StaticResource CustomButtonStyle}" Margin="0,0,10,0"/>
+            <Button Content="Редактировать" Command="{Binding EditVehicleCommand}" Style="{StaticResource CustomButtonStyle}" Margin="0,0,10,0"/>
+            <Button Content="Застраховать" Command="{Binding InsureVehicleCommand}" Style="{StaticResource CustomButtonStyle}" Margin="0,0,10,0"/>
+        </StackPanel>
+
+        <TextBlock Grid.Row="1" Text="{Binding ErrorMessage}" Foreground="Red" Margin="10,0,10,5" TextWrapping="Wrap" Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
+
+        <DataGrid Grid.Row="2" 
+                  ItemsSource="{Binding Vehicles}"
+                  SelectedItem="{Binding SelectedVehicle}"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  IsReadOnly="True"
+                  Margin="10,5,10,10"
+                  Style="{StaticResource CustomDataGridStyle}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Гос. номер" Binding="{Binding PlateNum}" Width="100"/>
+                <DataGridTextColumn Header="Марка" Binding="{Binding Brand}" Width="100"/>
+                <DataGridTextColumn Header="Модель" Binding="{Binding Model}" Width="100"/>
+                <DataGridTextColumn Header="Цвет" Binding="{Binding Color}" Width="80"/>
+                <DataGridTextColumn Header="Год" Binding="{Binding YearOfProduction}" Width="60"/>
+                <DataGridTextColumn Header="VIN" Binding="{Binding Vin}" Width="150"/>
+                <DataGridTextColumn Header="Категория" Binding="{Binding Category}" Width="80"/>
+                <DataGridTextColumn Header="Мощность (л.с.)" Binding="{Binding PowerHp}" Width="100"/>
+                <DataGridCheckBoxColumn Header="Застрахован" Binding="{Binding IsInsured}" Width="100"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Page>

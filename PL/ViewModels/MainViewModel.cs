@@ -6,7 +6,8 @@ namespace PL.ViewModels
     public class MainViewModel
     {
         private readonly ICurrentUserService _currentUserService;
-        private readonly INavigationService _navigationService;
+        private readonly IPageNavigationService _navigationPageService;
+        private readonly INavigationService _navigationWindowService;
         private readonly ICommand _goBackCommand;
         private readonly ICommand _logoutCommand;
         private readonly ICommand _navigateToVehiclesCommand;
@@ -14,16 +15,17 @@ namespace PL.ViewModels
         private readonly ICommand _navigateToClaimsCommand;
         private readonly ICommand _navigateToPaymentsCommand;
 
-        public MainViewModel(ICurrentUserService currentUserService, INavigationService navigationService)
+        public MainViewModel(ICurrentUserService currentUserService, IPageNavigationService navigationPageService, INavigationService navigationWindowService)
         {
             _currentUserService = currentUserService;
-            _navigationService = navigationService;
-            _goBackCommand = new RelayCommand(_ => _navigationService.GoBack(), () => _navigationService.CanGoBack);
+            _navigationPageService = navigationPageService;
+            _goBackCommand = new RelayCommand(_ => _navigationPageService.GoBack(), () => _navigationPageService.CanGoBack);
             _logoutCommand = new RelayCommand(_ => Logout(), (Func<bool>?)null);
-            _navigateToVehiclesCommand = new RelayCommand(_ => _navigationService.NavigateTo<VehiclesWindow>(), (Func<bool>?)null);
-            _navigateToPoliciesCommand = new RelayCommand(_ => _navigationService.NavigateTo<PoliciesWindow>(), (Func<bool>?)null);
-            _navigateToClaimsCommand = new RelayCommand(_ => _navigationService.NavigateTo<ClaimsWindow>(), (Func<bool>?)null);
-            _navigateToPaymentsCommand = new RelayCommand(_ => _navigationService.NavigateTo<PaymentsWindow>(), (Func<bool>?)null);
+            _navigateToVehiclesCommand = new RelayCommand(_ => _navigationPageService.NavigateTo<VehiclesPage>(), (Func<bool>?)null);
+            _navigateToPoliciesCommand = new RelayCommand(_ => _navigationPageService.NavigateTo<PoliciesPage>(), (Func<bool>?)null);
+            _navigateToClaimsCommand = new RelayCommand(_ => _navigationPageService.NavigateTo<ClaimsPage>(), (Func<bool>?)null);
+            _navigateToPaymentsCommand = new RelayCommand(_ => _navigationPageService.NavigateTo<PaymentsPage>(), (Func<bool>?)null);
+            _navigationWindowService = navigationWindowService;
         }
 
         public ICurrentUserService CurrentUserService => _currentUserService;
@@ -34,10 +36,11 @@ namespace PL.ViewModels
         public ICommand NavigateToPoliciesCommand => _navigateToPoliciesCommand;
         public ICommand NavigateToClaimsCommand => _navigateToClaimsCommand;
         public ICommand NavigateToPaymentsCommand => _navigateToPaymentsCommand;
+
         private void Logout()
         {
             _currentUserService.ClearCurrentUser();
-            _navigationService.NavigateTo<LoginWindow>();
+            _navigationWindowService.NavigateTo<LoginWindow>();
         }
     }
 }

@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using PL;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Controls;
 
 public interface INavigationService
 {
@@ -177,4 +179,41 @@ public class NavigationService : INavigationService, INotifyPropertyChanged
 
     public event PropertyChangedEventHandler? PropertyChanged;
     protected void OnPropertyChanged([CallerMemberName] string? name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+}
+
+public interface IPageNavigationService
+{
+    bool CanGoBack { get; }
+    void NavigateTo<TPage>() where TPage : Page;
+    void GoBack();
+    void InitializeFrame(Frame frame); 
+}
+public class PageNavigationService : IPageNavigationService
+{
+    private Frame? _frame;
+
+    public bool CanGoBack => _frame?.CanGoBack == true;
+
+    public void InitializeFrame(Frame frame)
+    {
+        _frame = frame ?? throw new ArgumentNullException(nameof(frame));
+    }
+
+
+    public void NavigateTo<TPage>() where TPage : Page
+    {
+        if (_frame == null)
+            throw new InvalidOperationException("Frame не инициализирован. Вызовите InitializeFrame сначала.");
+
+        var page = App.ServiceProvider.GetRequiredService<TPage>();
+        _frame.Navigate(page);
+    }
+
+    public void GoBack()
+    {
+        if (_frame != null && _frame.CanGoBack)
+        {
+            _frame.GoBack();
+        }
+    }
 }

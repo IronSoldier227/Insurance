@@ -16,24 +16,24 @@ namespace PL.ViewModels
     {
         private readonly IVehicleService _vehicleService;
         private readonly ICurrentUserService _currentUserService;
-        private readonly INavigationService _navigationService;
         private string _errorMessage = string.Empty;
+
+        private readonly IDialogService _dialogService;
 
         public VehiclesViewModel(
             IVehicleService vehicleService,
             ICurrentUserService currentUserService,
-            INavigationService navigationService)
+            IDialogService dialogService)
         {
             _vehicleService = vehicleService;
             _currentUserService = currentUserService;
-            _navigationService = navigationService;
+            _dialogService = dialogService; 
 
             LoadVehiclesCommand = new RelayCommand(async _ => await LoadVehiclesAsync(), (Func<bool>?)null);
             AddVehicleCommand = new RelayCommand(_ => AddVehicle(), (Func<bool>?)null);
             EditVehicleCommand = new RelayCommand(async _ => await EditVehicleAsync(), (Func<bool>?)null);
             DeleteVehicleCommand = new RelayCommand(async _ => await DeleteVehicleAsync(), (Func<bool>?)null);
             InsureVehicleCommand = new RelayCommand(async _ => await InsureVehicleAsync(), (Func<bool>?)null);
-            GoBackCommand = new RelayCommand(_ => _navigationService.GoBack(), () => _navigationService.CanGoBack);
         }
 
         private ObservableCollection<VehicleDto> _vehicles = new ObservableCollection<VehicleDto>();
@@ -71,7 +71,6 @@ namespace PL.ViewModels
         public ICommand EditVehicleCommand { get; }
         public ICommand DeleteVehicleCommand { get; }
         public ICommand InsureVehicleCommand { get; }
-        public ICommand GoBackCommand { get; } 
 
         public async Task LoadVehiclesAsync()
         {
@@ -124,15 +123,9 @@ namespace PL.ViewModels
                 var addWindow = new AddEditVehicleWindow
                 {
                     DataContext = viewModel,
-                    Owner = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w is VehiclesWindow)
                 };
 
-                if (addWindow.Owner != null)
-                {
-                    addWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                }
-
-                bool? result = addWindow.ShowDialog();
+                bool? result = _dialogService.ShowDialog<AddEditVehicleWindow>();
 
                 if (result == true)
                 {
@@ -170,7 +163,6 @@ namespace PL.ViewModels
                 var editWindow = new AddEditVehicleWindow
                 {
                     DataContext = viewModel,
-                    Owner = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w is VehiclesWindow)
                 };
 
                 if (editWindow.Owner != null)
@@ -248,16 +240,8 @@ namespace PL.ViewModels
                     claimService,
                     SelectedVehicle.Id);
 
-                var insureWindow = new CreatePolicyWindow(viewModel)
-                {
-                    Owner = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w is VehiclesWindow)
-                };
-
-                if (insureWindow.Owner != null)
-                {
-                    insureWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                }
-
+                var insureWindow = new CreatePolicyWindow(viewModel);
+               
                 bool? result = insureWindow.ShowDialog();
                 if (result == true)
                 {

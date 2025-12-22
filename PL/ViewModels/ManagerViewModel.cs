@@ -3,25 +3,27 @@ using System.Windows.Input;
 
 namespace PL.ViewModels
 {
-    public class ManagerViewModel
+    public class ManagerViewModel 
     {
         private readonly ICurrentUserService _currentUserService;
-        private readonly INavigationService _navigationService;
+        private readonly IPageNavigationService _navigationPageService;
+        private readonly INavigationService _navigationWindowService;
         private readonly ICommand _logoutCommand;
         private readonly ICommand _goBackCommand;
         private readonly ICommand _navigateToReportsCommand;
         private readonly ICommand _navigateToApproveClaimsCommand;
         private readonly ICommand _navigateToAnnualRevenueReportCommand;
 
-        public ManagerViewModel(ICurrentUserService currentUserService, INavigationService navigationService)
+        public ManagerViewModel(ICurrentUserService currentUserService, IPageNavigationService navigationPageService, INavigationService navigationWindowService)
         {
             _currentUserService = currentUserService;
-            _navigationService = navigationService;
+            _navigationPageService = navigationPageService;
+            _navigationWindowService = navigationWindowService;
             _logoutCommand = new RelayCommand(_ => Logout(), (Func<bool>?)null);
-            _goBackCommand = new RelayCommand(_ => _navigationService.GoBack(), () => _navigationService.CanGoBack);
-            _navigateToReportsCommand = new RelayCommand(_ => _navigationService.NavigateTo<ReportsWindow>(), (Func<bool>?)null);
-            _navigateToApproveClaimsCommand = new RelayCommand(_ => _navigationService.NavigateTo<ApproveClaimsWindow>(), (Func<bool>?)null);
-            _navigateToAnnualRevenueReportCommand = new RelayCommand(_ => _navigationService.NavigateTo<AnnualRevenueReportWindow>(), (Func<bool>?)null);
+            _goBackCommand = new RelayCommand(_ => _navigationPageService.GoBack(), () => _navigationPageService.CanGoBack);
+            _navigateToReportsCommand = new RelayCommand(_ => _navigationPageService.NavigateTo<ReportsPage>(), (Func<bool>?)null); 
+            _navigateToApproveClaimsCommand = new RelayCommand(_ => _navigationPageService.NavigateTo<ApproveClaimsPage>(), (Func<bool>?)null);
+            _navigateToAnnualRevenueReportCommand = new RelayCommand(_ => _navigationPageService.NavigateTo<AnnualRevenueReportPage>(), (Func<bool>?)null); 
         }
 
         public ICommand LogoutCommand => _logoutCommand;
@@ -30,10 +32,11 @@ namespace PL.ViewModels
         public ICommand NavigateToApproveClaimsCommand => _navigateToApproveClaimsCommand;
         public ICommand NavigateToAnnualRevenueReportCommand => _navigateToAnnualRevenueReportCommand;
 
+
         private void Logout()
         {
             _currentUserService.ClearCurrentUser();
-            _navigationService.NavigateTo<LoginWindow>();
+            _navigationWindowService.NavigateTo<LoginWindow>();
         }
     }
 }
