@@ -5,7 +5,7 @@ namespace Interfaces.Services
 {
     public interface IReportService
     {
-        Task<double> GetTotalPayoutsForYearAsync(int year);
-        Task<AnnualPolicyRevenueReportDto> GetAnnualRevenueReportAsync(int year);
+        Task<ReportDto> GetTotalPayoutsForYearAsync(int year);
+        Task<ReportDto> GetAnnualRevenueReportAsync(int year);
     }
 }

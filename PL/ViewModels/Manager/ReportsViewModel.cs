@@ -1,4 +1,6 @@
-﻿using Interfaces.Services; 
+﻿// PL.ViewModels/ReportsViewModel.cs
+using Interfaces.DTO;
+using Interfaces.Services;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -9,17 +11,22 @@ namespace PL.ViewModels
 {
     public class ReportsViewModel : INotifyPropertyChanged
     {
-        private readonly IReportService _reportService; 
+        private readonly IReportService _reportService;
         private readonly ICurrentUserService _currentUserService;
         private readonly INavigationWindowService _NavigationWindowService;
 
-        private string _totalAmount = "0.00 ₽";
-        public string TotalAmount
+        private string _yearInput = "2025"; 
+        public string YearInput
         {
-            get => _totalAmount;
-            private set { _totalAmount = value; OnPropertyChanged(); }
+            get => _yearInput;
+            set { _yearInput = value; OnPropertyChanged(); }
         }
-
+        private ReportDto? _report;
+        public ReportDto? Report
+        {
+            get => _report;
+            private set { _report = value; OnPropertyChanged(); }
+        }
         private string _errorMessage = string.Empty;
         public string ErrorMessage
         {
@@ -32,11 +39,11 @@ namespace PL.ViewModels
         private readonly ICommand _goBackCommand;
 
         public ReportsViewModel(
-            IReportService reportService, 
+            IReportService reportService,
             ICurrentUserService currentUserService,
             INavigationWindowService NavigationWindowService)
         {
-            _reportService = reportService; 
+            _reportService = reportService;
             _currentUserService = currentUserService;
             _NavigationWindowService = NavigationWindowService;
 
@@ -47,7 +54,7 @@ namespace PL.ViewModels
         private async Task GenerateReportAsync(string yearInput)
         {
             ErrorMessage = string.Empty;
-            TotalAmount = "0.00 ₽";
+            Report = null; // <-- Очищаем старый отчёт
 
             if (string.IsNullOrWhiteSpace(yearInput) || !int.TryParse(yearInput, out int year))
             {
@@ -57,8 +64,7 @@ namespace PL.ViewModels
 
             try
             {
-                var totalAmount = await _reportService.GetTotalPayoutsForYearAsync(year);
-                TotalAmount = totalAmount.ToString("N2") + " ₽";
+                Report = await _reportService.GetTotalPayoutsForYearAsync(year);
             }
             catch (Exception ex)
             {

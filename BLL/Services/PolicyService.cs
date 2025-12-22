@@ -125,22 +125,6 @@ namespace BLL.Services
             };
         }
 
-        public async Task<AnnualPolicyRevenueReportDto> GetAnnualRevenueReportAsync(int year)
-        {
-            var report = await _context.InsurancePolicies
-                .Where(p => p.StartDate.Year == year) 
-                .GroupBy(p => 1) 
-                .Select(g => new AnnualPolicyRevenueReportDto
-                {
-                    Year = year,
-                    TotalPoliciesCount = g.Count(), 
-                    TotalRevenue = g.Sum(p => p.TotalPrice) 
-                })
-                .FirstOrDefaultAsync(); 
-
-            return report ?? new AnnualPolicyRevenueReportDto { Year = year, TotalPoliciesCount = 0, TotalRevenue = 0 };
-        }
-
         public async Task CancelPolicyAsync(int policyId, int cancelledByManagerId)
         {
             var p = await _policyRepository.GetByIdAsync(policyId);

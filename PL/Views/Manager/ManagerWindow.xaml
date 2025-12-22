@@ -16,10 +16,9 @@
         <!-- Навигационное меню -->
         <StackPanel Grid.Column="0" Background="{StaticResource HeaderBackgroundBrush}" Margin="0,0,5,0">
             <TextBlock Text="Меню" Style="{StaticResource CustomHeaderTextStyle}" Margin="10,10,10,10"/>
-            <Button Content="Отчёты" Command="{Binding NavigateToReportsCommand}" Style="{StaticResource CustomButtonStyle}" Margin="10,5"/>
-            <Button Content="Рассмотреть случаи" Command="{Binding NavigateToApproveClaimsCommand}" Style="{StaticResource CustomButtonStyle}" Margin="10,5"/>
+            <Button Content="Отчёт по выплатам" Command="{Binding NavigateToReportsCommand}" Style="{StaticResource CustomButtonStyle}" Margin="10,5"/>
             <Button Content="Доходы от полисов" Command="{Binding NavigateToAnnualRevenueReportCommand}" Style="{StaticResource CustomButtonStyle}" Margin="10,5"/>
-            <Button Content="Назад" Command="{Binding GoBackCommand}" Style="{StaticResource CustomButtonStyle}" Margin="10,5"/>
+            <Button Content="Рассмотреть случаи" Command="{Binding NavigateToApproveClaimsCommand}" Style="{StaticResource CustomButtonStyle}" Margin="10,5"/>
             <Button Content="Выход" Command="{Binding LogoutCommand}" Style="{StaticResource CustomButtonStyle}" Margin="10,5"/>
         </StackPanel>
 

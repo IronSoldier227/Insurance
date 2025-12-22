@@ -13,15 +13,15 @@ namespace PL.ViewModels
         private readonly IReportService _reportService;
         private readonly INavigationWindowService _NavigationWindowService;
 
-        private string _yearInput = "2025"; 
+        private string _yearInput = "2025";
         public string YearInput
         {
             get => _yearInput;
             set { _yearInput = value; OnPropertyChanged(); }
         }
 
-        private AnnualPolicyRevenueReportDto? _report;
-        public AnnualPolicyRevenueReportDto? Report
+        private ReportDto? _report;
+        public ReportDto? Report
         {
             get => _report;
             private set { _report = value; OnPropertyChanged(); }
