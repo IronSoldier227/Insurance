@@ -36,13 +36,11 @@ namespace PL.ViewModels
             _catalogService = catalogService;
             _editingVehicle = editingVehicle;
 
-            // Устанавливаем режим
             IsEditingMode = editingVehicle != null;
 
             SaveCommand = new RelayCommand(async _ => await SaveAsync(), _ => CanSave());
             CancelCommand = new RelayCommand(_ => Cancel(), (Func<bool>?)null);
 
-            // Загружаем данные
             _ = LoadInitialDataAsync();
         }
 

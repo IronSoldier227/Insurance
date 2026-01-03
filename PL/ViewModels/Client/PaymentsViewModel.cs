@@ -96,7 +96,7 @@ namespace PL.ViewModels
                         var managerUser = await _userService.GetByIdAsync(payment.AuthorizedBy);
                         if (managerUser != null)
                         {
-                            managerName = $"{managerUser.FirstName} {managerUser.LastName} {managerUser.MiddleName}".Trim();
+                            managerName = $"{managerUser.LastName} {managerUser.FirstName} {managerUser.MiddleName}".Trim();
                         }
 
                     Payments.Add(new PaymentDto

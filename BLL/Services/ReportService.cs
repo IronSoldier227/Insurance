@@ -38,8 +38,8 @@ namespace BLL.Services
                 .Where(p => p.PaymentDate.Year == year)
                 .Select(p => new ClientReportItemDto
                 {
-                    ClientFullName = p.Claim.Policy.Vehicle.Client.IdNavigation.FirstName + " " +
-                                     p.Claim.Policy.Vehicle.Client.IdNavigation.LastName + " " +
+                    ClientFullName = p.Claim.Policy.Vehicle.Client.IdNavigation.LastName + " " +
+                                     p.Claim.Policy.Vehicle.Client.IdNavigation.FirstName + " " +
                                      p.Claim.Policy.Vehicle.Client.IdNavigation.MiddleName,
                     Amount = p.Amount
                 })
@@ -71,8 +71,8 @@ namespace BLL.Services
 
             var clientData = yearPolicies.Select(p => new ClientReportItemDto
             {
-                ClientFullName = p.Vehicle.Client.IdNavigation.FirstName + " " +
-                                 p.Vehicle.Client.IdNavigation.LastName + " " +
+                ClientFullName = p.Vehicle.Client.IdNavigation.LastName + " " +
+                                 p.Vehicle.Client.IdNavigation.FirstName + " " +
                                  p.Vehicle.Client.IdNavigation.MiddleName,
                 Amount = p.TotalPrice
             }).ToList();
